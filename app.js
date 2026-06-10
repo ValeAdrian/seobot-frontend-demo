@@ -68,6 +68,73 @@ async function api(path, opts = {}) {
 function setUpdated() { $('#updated').textContent = new Date().toLocaleTimeString(); }
 function fmtPos(p) { return p == null ? '—' : p; }
 
+// ---- inline SVG icons (Lucide-style, no CDN; stroke=currentColor) ----
+const ICON = {
+  overview: '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+  decisions: '<path d="m16 16 3-8 3 8c-2 1.3-4 1.3-6 0Z"/><path d="m2 16 3-8 3 8c-2 1.3-4 1.3-6 0Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7c2 0 4-1 6-2 2 1 4 2 6 2"/>',
+  thoughts: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5A6 6 0 1 0 6 8c0 1.3.5 2.5 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+  plan: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+  content: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+  opportunities: '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/>',
+  rank: '<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+  compare: '<circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M12 6h4a2 2 0 0 1 2 2v7"/><path d="M12 18H8a2 2 0 0 1-2-2V9"/>',
+  backlinks: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.4"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.4"/>',
+  competitors: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/>',
+  analytics: '<path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/>',
+  health: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  report: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 18v-3"/><path d="M12 18v-6"/><path d="M16 18v-4"/>',
+  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.6-9.6"/><path d="m16.5 7.5 3 3 2-2-3-3"/>',
+  serp: '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="11" cy="11" r="2.5"/><path d="m16 16-3-3"/>',
+  audit: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+  crawl: '<path d="M12 20v-9"/><rect x="8" y="6" width="8" height="9" rx="4"/><path d="M8.5 3 10 5M15.5 3 14 5"/><path d="M3 9h3M18 9h3M2.5 14H6M18 14h3.5M4 19l3-2M20 19l-3-2"/>',
+  domains: '<circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/>',
+  indexation: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  bulk: '<path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+  imports: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5-5 5 5"/><path d="M12 5v12"/>',
+  alerts: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  connections: '<path d="M9 2v6M15 2v6"/><path d="M18 8H6v3a6 6 0 0 0 12 0z"/><path d="M12 17v5"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+  projects: '<path d="M20 17a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4l-1.5-2H8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/><path d="M2 8v11a2 2 0 0 0 2 2h14"/>',
+  integrations: '<rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M9 7V3M15 7V3M9 21v-4M15 21v-4M3 9h4M3 15h4M17 9h4M17 15h4"/>',
+  spend: '<path d="M12 1.5v21"/><path d="M17 6H9.5a3.3 3.3 0 0 0 0 6.6h5a3.3 3.3 0 0 1 0 6.6H6"/>',
+  logs: '<path d="M8 21h11a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 4 0V8h6"/><path d="M14 8h3M14 12h3M9 16h8"/>',
+  connect: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+  // stat / section glyphs
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  star: '<path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 18.6 6.7 19.4l1.2-6-4.5-4.1 6-.7z"/>',
+  leaderboard: '<path d="M16 4h3v16h-3zM5 10h3v10H5zM10.5 7h3v13h-3z"/>',
+  pulse: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
+  zap: '<path d="M13 2 3 14h8l-1 8 11-13h-8z"/>',
+  brain: '<path d="M12 5a3 3 0 0 0-6 .5A3 3 0 0 0 4 11a3 3 0 0 0 2 5 3 3 0 0 0 6 .5z"/><path d="M12 5a3 3 0 0 1 6 .5A3 3 0 0 1 20 11a3 3 0 0 1-2 5 3 3 0 0 1-6 .5z"/><path d="M12 5v12"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>',
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  up: '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>',
+  down: '<path d="M12 5v14"/><path d="m5 12 7 7 7-7"/>',
+};
+function icon(name, cls = '') { return `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ''}</svg>`; }
+// map each nav view id → an icon name
+const NAV_ICON = {
+  'overview': 'overview', 'action-plan': 'plan', 'thoughts': 'thoughts', 'decisions': 'decisions',
+  'content': 'content', 'opportunities': 'opportunities', 'rank': 'rank', 'rank-compare': 'compare',
+  'backlinks': 'backlinks', 'competitors': 'competitors', 'search-console': 'search', 'bing': 'globe',
+  'analytics': 'analytics', 'site-health': 'health', 'report': 'report', 'keyword-research': 'key',
+  'serp-inspector': 'serp', 'site-audit': 'audit', 'crawl': 'crawl', 'domains': 'domains',
+  'indexation': 'indexation', 'bulk-tools': 'bulk', 'imports': 'imports', 'alerts': 'alerts',
+  'connections': 'connections', 'project-settings': 'settings', 'connect': 'connect', 'projects': 'projects',
+  'integrations': 'integrations', 'spend': 'spend', 'logs': 'logs', 'settings': 'settings',
+};
+// icon stat tile: label + corner icon, big value, optional delta {dir:'up'|'down'|'flat', text}
+function stat(k, v, ic, delta, small) {
+  const d = delta ? `<span class="delta ${delta.dir}">${delta.dir === 'up' ? icon('up', 'sm') : delta.dir === 'down' ? icon('down', 'sm') : ''}${esc(delta.text)}</span>` : '';
+  return `<div class="card stat hov">
+    <div class="stat-top"><span class="k">${esc(k)}</span>${ic ? icon(ic, 'stat-ico') : ''}</div>
+    <div class="v ${small ? 'sm' : ''} tnum">${esc(v)}</div>${d}</div>`;
+}
+
 // ---- chrome ----
 function renderSidebar() {
   const sb = $('#sidebar');
@@ -76,7 +143,7 @@ function renderSidebar() {
     ${g.items.map(i => `
       <button class="sb-item ${i.id === state.view ? 'active' : ''} ${i.soon ? 'soon' : ''}"
               data-view="${i.id}" ${i.soon ? 'disabled' : ''}>
-        <span>${esc(i.label)}</span>${i.soon ? '<span class="pill">soon</span>' : ''}
+        ${icon(NAV_ICON[i.id] || 'overview')}<span class="lbl">${esc(i.label)}</span>${i.soon ? '<span class="pill">soon</span>' : ''}
       </button>`).join('')}
   `).join('');
   sb.querySelectorAll('.sb-item:not(.soon)').forEach(btn =>
@@ -190,43 +257,61 @@ async function viewOverview() {
     `<div class="actrow"><span class="tag">${esc(a.type)}</span><span>${esc(a.label)}</span>
       <span class="mut">${esc(a.meta || '')}${a.cost != null ? ` · $${a.cost}` : ''}</span></div>`).join('')
     : '<span class="mut">No activity yet.</span>';
+  const trendVals = (s.trend || []).map(d => d.visibility);
+  const vd = trendVals.length > 1 ? +(trendVals[trendVals.length - 1] - trendVals[0]).toFixed(1) : null;
+  const vdHtml = vd == null ? '' : `<span class="delta ${vd > 0 ? 'up' : vd < 0 ? 'down' : 'flat'}">${vd > 0 ? icon('up', 'sm') : vd < 0 ? icon('down', 'sm') : ''}${Math.abs(vd)}</span>`;
+  const rankPct = t.tracked_keywords ? Math.round((t.ranking_keywords / t.tracked_keywords) * 100) : 0;
   view(head('Overview', activeName()) + `
-    <div class="hero">
-      <h2>Visibility</h2>
-      <div class="big tnum">${t.visibility ?? 0}</div>
-      <div id="heroChart"></div>
-      ${hasTrend ? '' : `<div class="empty" style="margin:8px 0 14px">No rank history yet — run the rank worker (Settings shows the command) to populate the trend.</div>`}
+    <div class="bento">
+      <div class="card c8">
+        <div class="card-head">
+          <div><span class="k" style="font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;font-weight:500">Search visibility</span>
+            <div style="display:flex;align-items:baseline;gap:9px;margin-top:3px"><span class="big tnum" style="font-size:34px">${t.visibility ?? 0}</span>${vdHtml}</div></div>
+          <span class="sec-h" style="font-size:12px;color:var(--mut)">${icon('rank', 'sm')} 30-day trend</span>
+        </div>
+        <div id="heroChart"></div>
+        ${hasTrend ? '' : `<div class="empty" style="margin:8px 0 6px">No rank history yet — run the rank worker (Settings shows the command) to populate the trend.</div>`}
+      </div>
+      <div class="card c4">
+        <div class="card-head"><span class="sec-h">${icon('target')} Keyword health</span></div>
+        <div class="big tnum" style="font-size:32px">${t.tracked_keywords ?? 0}</div>
+        <div class="mut" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-top:2px">tracked keywords</div>
+        <div style="margin-top:12px">
+          <div class="kv-row"><span class="mut">Ranking</span><b class="tnum pos">${t.ranking_keywords ?? 0}</b></div>
+          <div class="kv-row"><span class="mut">Top 3</span><b class="tnum">${t.top3 ?? 0}</b></div>
+          <div class="kv-row"><span class="mut">Top 10</span><b class="tnum">${t.top10 ?? 0}</b></div>
+        </div>
+        <div class="meter" style="margin-top:14px"><div class="meter-fill pos" style="width:${rankPct}%"></div></div>
+        <div class="mut" style="font-size:11px;margin-top:6px">${rankPct}% of tracked keywords ranking</div>
+      </div>
     </div>
     <div class="grid tiles">
-      ${tile('Tracked keywords', t.tracked_keywords)}
-      ${tile('Ranking', t.ranking_keywords)}
-      ${tile('Top 3', t.top3)}
-      ${tile('Top 10', t.top10)}
-      ${tile('Avg position', t.avg_position ?? '—', true)}
-      ${tile('DataForSEO MTD', sp ? '$' + sp.mtd : '—', true)}
+      ${stat('Avg position', t.avg_position ?? '—', 'target', null, true)}
+      ${stat('Top 3 results', t.top3 ?? 0, 'star')}
+      ${stat('Top 10 results', t.top10 ?? 0, 'leaderboard')}
+      ${stat('Quick wins', quickWins, 'zap')}
+      ${stat('DataForSEO MTD', sp ? '$' + sp.mtd : '—', 'spend', null, true)}
     </div>
-    <div class="card cta" id="qwCard" style="margin-top:14px;cursor:pointer">
-      <div class="row" style="align-items:center">
-        <div><h3 style="flex:0">⚡ Quick wins — <span class="tnum">${quickWins}</span></h3>
-          <div class="mut" style="font-size:12.5px">keywords in positions 8–20 — one push from page 1</div></div>
-        <div class="spacer"></div><span class="btn">Open in Rank Tracking →</span></div>
+    <div class="bento" style="margin-top:16px">
+      <div class="card cta c6" id="qwCard" style="cursor:pointer">
+        <div class="card-head"><span class="sec-h">${icon('zap')} Quick wins <small class="mut">— ${quickWins}</small></span><span class="btn">Open in Rankings ${icon('arrow', 'sm')}</span></div>
+        <div class="mut" style="font-size:12.5px">Keywords in positions 8–20 — one push from page 1.</div>
+      </div>
+      ${planp ? `<div class="card cta c6" id="planCard" style="cursor:pointer">
+        <div class="card-head"><span class="sec-h">${icon('plan')} Action Plan <small class="mut">— ${planp.done || 0}/${planp.total || 0} done</small></span><span class="btn">Open ${icon('arrow', 'sm')}</span></div>
+        <div class="mut" style="font-size:12.5px">${(planp.top && planp.top[0]) ? 'Next: ' + esc(planp.top[0].title) : 'Your prioritized, grouped next actions.'}</div>
+        <div class="plan-progress-bar" style="margin-top:10px"><span style="width:${planp.total ? Math.round((planp.done || 0) / planp.total * 100) : 0}%"></span></div>
+      </div>` : '<div class="c6"></div>'}
     </div>
-    ${planp ? `<div class="card cta" id="planCard" style="margin-top:14px;cursor:pointer">
-      <div class="row" style="align-items:center">
-        <div style="flex:1"><h3 style="flex:0">🧠 Action Plan — <span class="tnum">${planp.done || 0}/${planp.total || 0}</span> done</h3>
-          <div class="mut" style="font-size:12.5px">${(planp.top && planp.top[0]) ? 'Next: ' + esc(planp.top[0].title) : 'your prioritized, grouped next actions'}</div>
-          <div class="plan-progress-bar" style="margin-top:8px"><span style="width:${planp.total ? Math.round((planp.done || 0) / planp.total * 100) : 0}%"></span></div></div>
-        <div class="spacer"></div><span class="btn">Open Action Plan →</span></div>
-    </div>` : ''}
     ${strategistCard(strat)}
-    <div class="row" style="margin-top:14px;align-items:flex-start">
-      <div class="card"><h3>Top climbers <span class="mut" style="font-size:11px">7d</span></h3>
+    <div class="bento" style="margin-top:16px">
+      <div class="card c6"><div class="card-head"><span class="sec-h">${icon('up')} Top climbers <small class="mut">7d</small></span></div>
         <table><thead><tr><th>Keyword</th><th>Pos</th><th>Δ</th></tr></thead><tbody>${moverRows(up)}</tbody></table></div>
-      <div class="card"><h3>Top fallers <span class="mut" style="font-size:11px">7d</span></h3>
+      <div class="card c6"><div class="card-head"><span class="sec-h">${icon('down')} Top fallers <small class="mut">7d</small></span></div>
         <table><thead><tr><th>Keyword</th><th>Pos</th><th>Δ</th></tr></thead><tbody>${moverRows(down)}</tbody></table></div>
     </div>
     ${serpCard(serpf)}
-    <div class="card" style="margin-top:14px"><h3>Recent activity</h3><div style="margin-top:6px">${actRows}</div></div>`);
+    <div class="card" style="margin-top:16px"><div class="card-head"><span class="sec-h">${icon('pulse')} Recent activity</span></div><div>${actRows}</div></div>`);
   if (hasTrend) drawHero(s.trend);
   const qw = $('#qwCard');
   if (qw) qw.addEventListener('click', () => goFiltered('rank', { band: 'quick_wins' }));

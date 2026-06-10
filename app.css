@@ -245,3 +245,76 @@ th.selcol,td:has(.rowsel){width:34px;text-align:center}
 details.card>summary{cursor:pointer;list-style:none;font-weight:600}
 details.card>summary::-webkit-details-marker{display:none}
 ol,ul{padding-left:18px}
+
+/* ============================================================================
+   STITCH UPLIFT — bento layout · inline-SVG icons (no CDN) · icon stat tiles ·
+   section heads · preview rows. Extends everything above; colour tokens unchanged.
+   ============================================================================ */
+/* inline svg icon (stroke = currentColor, so it inherits text colour) */
+.ico{display:inline-flex;flex:0 0 auto;width:20px;height:20px;stroke:currentColor;fill:none;
+  stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round}
+.ico.sm{width:15px;height:15px;stroke-width:2} .ico.lg{width:26px;height:26px;stroke-width:1.7}
+
+/* nav: icon + label */
+.sb-item{gap:11px}
+.sb-item .ico{color:var(--faint);transition:color .14s}
+.sb-item:hover .ico{color:var(--txt)}
+.sb-item.active .ico{color:var(--brand)}
+.sb-item .lbl{flex:1}
+
+/* bento grid (12-col, collapses on narrow) */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-bottom:16px}
+.bento .c3{grid-column:span 3}.bento .c4{grid-column:span 4}.bento .c6{grid-column:span 6}
+.bento .c8{grid-column:span 8}.bento .c12{grid-column:span 12}
+@media(max-width:1080px){.bento .c3{grid-column:span 6}.bento .c4{grid-column:span 6}
+  .bento .c8{grid-column:span 12}.bento .c6{grid-column:span 12}}
+@media(max-width:560px){.bento>*{grid-column:span 12 !important}}
+
+/* interactive card hover-lift */
+.card.hov{transition:border-color .15s,background .15s,box-shadow .15s,transform .08s}
+.card.hov:hover{background:var(--panel2);border-color:var(--line2);box-shadow:var(--shadow-md)}
+
+/* icon stat tile — label + corner icon, big value, delta row */
+.stat{display:flex;flex-direction:column;min-height:120px}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.stat .k{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;font-weight:500}
+.stat .stat-ico{color:var(--faint);transition:color .15s}
+.stat.hov:hover .stat-ico{color:var(--brand)}
+.stat .v{font-family:var(--disp);font-size:30px;font-weight:700;line-height:1;letter-spacing:-.02em;margin-top:auto;padding-top:12px}
+.stat .v.sm{font-size:23px}
+.delta{display:inline-flex;align-items:center;gap:3px;font:600 12px var(--mono);margin-top:8px}
+.delta.up{color:var(--pos)} .delta.down{color:var(--neg)} .delta.flat{color:var(--mut)}
+.big{font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1.04}
+
+/* section / card header with icon */
+.sec-h{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-weight:700;font-size:15px;
+  color:#f3f7fb;letter-spacing:-.01em}
+.sec-h .ico{color:var(--brand)}
+.sec-h small,.sec-h .mut{font:400 11px var(--body)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.card-head .lnk{font-size:12px}
+
+/* segmented pill toggle (Desktop/Mobile etc.) */
+.seg{display:inline-flex;gap:3px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{appearance:none;border:0;background:transparent;color:var(--mut);font:600 11.5px var(--body);
+  padding:4px 12px;border-radius:999px;cursor:pointer;transition:.14s}
+.seg button.on{background:rgba(92,200,255,.14);color:var(--brand)}
+
+/* preview rows (overview quick opportunities / agent decisions) */
+.prev{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:var(--radius-sm);transition:border-color .14s,background .14s;cursor:pointer;font-size:13px}
+.prev+.prev{margin-top:9px}
+.prev:hover{border-color:var(--acc2);background:rgba(92,200,255,.05)}
+.prev .dot{width:8px;height:8px;border-radius:999px;flex:0 0 auto}
+.prev .go{margin-left:auto;color:var(--faint)} .prev:hover .go{color:var(--brand)}
+.prev .lab{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* hero-stat row (label + delta inline) for the visibility chart card */
+.kv-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)}
+.kv-row:last-child{border-bottom:0}
+
+/* inline svg donut / gauge wrappers keep their aspect inside cards */
+.donut{display:block;margin:4px auto} .donut-legend{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+.donut-legend .lg{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.donut-legend .sw{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+.donut-legend .val{margin-left:auto;font-family:var(--mono);color:var(--txt)}
