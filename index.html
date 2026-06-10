@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex, nofollow">
+<title>seobot</title>
+<link rel="preload" href="roboto-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="montserrat-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="app.css">
+<!-- favicon: seobot mark (plan §3) — blue magnifier lens + handle, green rising sparkline inside the lens -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none'><circle cx='17' cy='17' r='12' stroke='%235cc8ff' stroke-width='2.4'/><path d='M26 26 L34 34' stroke='%235cc8ff' stroke-width='2.8' stroke-linecap='round'/><path d='M11 20 L15 16 L19 18 L23 12' stroke='%233fd896' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><circle cx='23' cy='12' r='2' fill='%233fd896'/></svg>">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <button id="navToggle" class="navtoggle" type="button" aria-label="Toggle navigation">☰</button>
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="24" height="24" fill="none">
+          <circle cx="17" cy="17" r="12" stroke="#5cc8ff" stroke-width="2.4"/>
+          <path d="M26 26 L34 34" stroke="#5cc8ff" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M11 20 L15 16 L19 18 L23 12" stroke="#3fd896" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="23" cy="12" r="2" fill="#3fd896"/>
+        </svg>
+      </span>
+      <span class="wordmark">seo·<span class="g">bot</span></span>
+    </div>
+    <div class="spacer"></div>
+    <div class="projsw">
+      <label for="projectSelect">Project</label>
+      <select id="projectSelect" aria-label="Active project"></select>
+    </div>
+    <span id="updated" class="updated">—</span>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar" aria-label="Primary navigation"></aside>
+  <main class="content" id="view" aria-live="polite">
+    <div class="loading">Loading…</div>
+  </main>
+</div>
+
+<!-- TradingView Lightweight Charts (Apache-2.0), VENDORED + served locally (never a CDN).
+     If it fails to load, app.js falls back to an inline SVG sparkline. -->
+<script src="lightweight-charts.standalone.production.js"></script>
+<!-- DEMO ONLY: mock backend (dummy data, no secrets) so pages render without the real API. Remove for production. -->
+<script src="mock.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

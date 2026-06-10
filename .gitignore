@@ -1,0 +1,24 @@
+# This is a static, no-build design demo — nothing here is generated or secret.
+# Guard anyway against accidentally committing local cruft or real env files.
+
+# Never commit secrets (there are none here — keep it that way)
+.env
+.env.*
+*.key
+*.pem
+secrets/
+.secrets/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Local server / tooling
+__pycache__/
+.playwright-mcp/
+node_modules/
