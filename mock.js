@@ -130,7 +130,7 @@
         count: 4,
         done: 1,
         tasks: [
-          { key: "off-001", title: "Guest post on pokies-review.com.au", detail: "DR 48; mentions pokies bonuses. Pitch: '5 Myths About Australian Pokies RTP.' Link to /pokies-rtp-guide.", impact: "medium", effort: "high", state: "done", source: "gap" }
+          { key: "off-001", title: "Guest post on pokies-review.example", detail: "DR 48; mentions pokies bonuses. Pitch: '5 Myths About Australian Pokies RTP.' Link to /pokies-rtp-guide.", impact: "medium", effort: "high", state: "done", source: "gap" }
         ]
       },
       {
@@ -378,7 +378,7 @@
       "difficulty": 38,
       "intent": "commercial",
       "current_rank": null,
-      "competing_urls": ["casinopro.au/bonuses", "acepoker.com.au/offers"],
+      "competing_urls": ["casinopro.example/bonuses", "acepoker.example/offers"],
       "gap_source": "ahrefs_rank_tracker"
     },
     "score": { "agreement": true, "gemma_correct": true, "anthropic_correct": true, "outcome": null },
@@ -389,8 +389,8 @@
         "role": "system",
         "message": "You overruled me—Gemma says YES but you said NO. Let's talk it out. I searched for recent updates on the competing pages. Their content is thin (user question about eligibility only); yours is comprehensive. The opportunity stands.",
         "web_findings": [
-          { "url": "https://casinopro.au/bonuses", "title": "Casino Bonuses & Promos – CasinoPro Australia", "snippet": "Latest bonuses and promotional offers..." },
-          { "url": "https://acepoker.com.au/offers", "title": "Ace Poker Offers – Australian Poker Site", "snippet": "Exclusive offers for registered members..." }
+          { "url": "https://casinopro.example/bonuses", "title": "Casino Bonuses & Promos – CasinoPro Australia", "snippet": "Latest bonuses and promotional offers..." },
+          { "url": "https://acepoker.example/offers", "title": "Ace Poker Offers – Australian Poker Site", "snippet": "Exclusive offers for registered members..." }
         ],
         "created_at": "2026-06-08T15:10:00Z"
       },
@@ -615,33 +615,33 @@
     "refdomains_live": 187,
     "backlinks_live": 532,
     "top_referring_domains": [
-      { "domain": "gambling-guide.com.au", "domain_rating": 42, "links": 8, "dofollow": 7, "first_seen": "2026-04-15", "toxic": false, "toxic_reason": null },
-      { "domain": "casino-review-au.net", "domain_rating": 35, "links": 5, "dofollow": 5, "first_seen": "2026-03-22", "toxic": false, "toxic_reason": null },
-      { "domain": "pokies-hub.com.au", "domain_rating": 28, "links": 3, "dofollow": 3, "first_seen": "2026-02-10", "toxic": false, "toxic_reason": null },
-      { "domain": "aussie-casinos.info", "domain_rating": 18, "links": 2, "dofollow": 0, "first_seen": "2026-01-30", "toxic": false, "toxic_reason": null }
+      { "domain": "gambling-guide.example", "domain_rating": 42, "links": 8, "dofollow": 7, "first_seen": "2026-04-15", "toxic": false, "toxic_reason": null },
+      { "domain": "casino-review-au.example", "domain_rating": 35, "links": 5, "dofollow": 5, "first_seen": "2026-03-22", "toxic": false, "toxic_reason": null },
+      { "domain": "pokies-hub.example", "domain_rating": 28, "links": 3, "dofollow": 3, "first_seen": "2026-02-10", "toxic": false, "toxic_reason": null },
+      { "domain": "aussie-casinos.example", "domain_rating": 18, "links": 2, "dofollow": 0, "first_seen": "2026-01-30", "toxic": false, "toxic_reason": null }
     ],
     "referring_domains_seen": 187,
     "toxic_count": 2,
     "toxic_domains": [
-      { "domain": "itxoft-casino-spam.xyz", "domain_rating": 1, "dofollow": 0, "reason": "known PBN itxoft network" },
-      { "domain": "low-authority-spam.net", "domain_rating": 2, "dofollow": 0, "reason": "DR <= 3, no dofollow links" }
+      { "domain": "itxoft-casino-spam.example", "domain_rating": 1, "dofollow": 0, "reason": "known PBN itxoft network" },
+      { "domain": "low-authority-spam.example", "domain_rating": 2, "dofollow": 0, "reason": "DR <= 3, no dofollow links" }
     ],
     "errors": null
   },
   "/api/p/{p}/competitors": {
     "items": [
-      { "id": 1, "project_id": 1, "domain": "justcasino.com", "label": "Direct competitor", "last_overview": { "count": 34, "top3": 5, "top10": 18, "etv": 8420, "is_new": 2, "is_up": 4, "is_down": 1, "is_lost": 0 }, "last_checked_at": "2026-06-09", "created_at": "2026-05-15" },
-      { "id": 2, "project_id": 1, "domain": "spinriseaustralia.com.au", "label": "Rising competitor", "last_overview": { "count": 28, "top3": 3, "top10": 12, "etv": 6150, "is_new": 3, "is_up": 2, "is_down": 2, "is_lost": 1 }, "last_checked_at": "2026-06-08", "created_at": "2026-05-20" }
+      { "id": 1, "project_id": 1, "domain": "justcasino.example", "label": "Direct competitor", "last_overview": { "count": 34, "top3": 5, "top10": 18, "etv": 8420, "is_new": 2, "is_up": 4, "is_down": 1, "is_lost": 0 }, "last_checked_at": "2026-06-09", "created_at": "2026-05-15" },
+      { "id": 2, "project_id": 1, "domain": "spinriseaustralia.example", "label": "Rising competitor", "last_overview": { "count": 28, "top3": 3, "top10": 12, "etv": 6150, "is_new": 3, "is_up": 2, "is_down": 2, "is_lost": 1 }, "last_checked_at": "2026-06-08", "created_at": "2026-05-20" }
     ],
     "us": { "domain": "demo-casino.example", "tracked": 5, "count": 4, "top3": 1, "top10": 2 }
   },
   "/api/p/{p}/competitors/{id}/keywords": {
     "rows": [
-      { "keyword": "online pokies au", "position": 7, "search_volume": 1200, "we_track": true, "url": "https://justcasino.com/pokies" },
-      { "keyword": "best crypto casino", "position": 12, "search_volume": 540, "we_track": false, "url": "https://justcasino.com/crypto" },
-      { "keyword": "live dealer slots", "position": 19, "search_volume": 380, "we_track": false, "url": "https://justcasino.com/live-dealer" },
-      { "keyword": "high roller pokies", "position": 25, "search_volume": 210, "we_track": false, "url": "https://justcasino.com/vip" },
-      { "keyword": "australian online gambling", "position": 30, "search_volume": 890, "we_track": false, "url": "https://justcasino.com/au-gambling" }
+      { "keyword": "online pokies au", "position": 7, "search_volume": 1200, "we_track": true, "url": "https://justcasino.example/pokies" },
+      { "keyword": "best crypto casino", "position": 12, "search_volume": 540, "we_track": false, "url": "https://justcasino.example/crypto" },
+      { "keyword": "live dealer slots", "position": 19, "search_volume": 380, "we_track": false, "url": "https://justcasino.example/live-dealer" },
+      { "keyword": "high roller pokies", "position": 25, "search_volume": 210, "we_track": false, "url": "https://justcasino.example/vip" },
+      { "keyword": "australian online gambling", "position": 30, "search_volume": 890, "we_track": false, "url": "https://justcasino.example/au-gambling" }
     ],
     "count": 5,
     "cost": 0.85,
@@ -723,7 +723,7 @@
       { "id": 1, "url": "https://demo-casino.example/", "label": "homepage", "indexed": true, "serp_count": 1, "checked_on": "2026-06-09", "created_at": "2026-05-10" },
       { "id": 2, "url": "https://demo-casino.example/pokies-guide", "label": "money page", "indexed": true, "serp_count": 1, "checked_on": "2026-06-09", "created_at": "2026-05-15" },
       { "id": 3, "url": "https://demo-casino.example/bonuses", "label": "promotions", "indexed": true, "serp_count": 1, "checked_on": "2026-06-09", "created_at": "2026-05-18" },
-      { "id": 4, "url": "https://parasite-placement.com/demo-casino-review", "label": "parasite: casino-review-au", "indexed": true, "serp_count": 2, "checked_on": "2026-06-09", "created_at": "2026-06-01" },
+      { "id": 4, "url": "https://parasite-placement.example/demo-casino-review", "label": "parasite: casino-review-au", "indexed": true, "serp_count": 2, "checked_on": "2026-06-09", "created_at": "2026-06-01" },
       { "id": 5, "url": "https://demo-casino.example/blog/strategy", "label": "blog post", "indexed": false, "serp_count": 0, "checked_on": "2026-06-08", "created_at": "2026-06-05" }
     ],
     "total": 5,
@@ -798,8 +798,8 @@
   },
   "/api/p/{p}/domains": {
     "items": [
-      {"id": 1, "domain": "premium-slots-au.com", "source": "whoisfreaks-dropped", "tags": ["slots", "au"], "relevancy": 92, "domain_rating": 18, "refdomains": 14, "parasite_score": 62, "first_seen": "2015-03-10", "wayback_years": 9, "status": "watching", "price": null, "note": "Good domain age", "created_at": "2026-06-05T11:20:00"},
-      {"id": 2, "domain": "aussie-casino.net", "source": "whoisfreaks-expired", "tags": ["casino", "au"], "relevancy": 88, "domain_rating": 22, "refdomains": 28, "parasite_score": 74, "first_seen": "2013-07-22", "wayback_years": 11, "status": "bought", "price": 45.50, "note": "Redirected to main", "created_at": "2026-06-03T09:15:00"}
+      {"id": 1, "domain": "premium-slots-au.example", "source": "whoisfreaks-dropped", "tags": ["slots", "au"], "relevancy": 92, "domain_rating": 18, "refdomains": 14, "parasite_score": 62, "first_seen": "2015-03-10", "wayback_years": 9, "status": "watching", "price": null, "note": "Good domain age", "created_at": "2026-06-05T11:20:00"},
+      {"id": 2, "domain": "aussie-casino.example", "source": "whoisfreaks-expired", "tags": ["casino", "au"], "relevancy": 88, "domain_rating": 22, "refdomains": 28, "parasite_score": 74, "first_seen": "2013-07-22", "wayback_years": 11, "status": "bought", "price": 45.50, "note": "Redirected to main", "created_at": "2026-06-03T09:15:00"}
     ],
     "total": 2
   },

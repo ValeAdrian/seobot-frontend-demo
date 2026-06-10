@@ -1246,7 +1246,7 @@ async function viewCompetitors() {
         <div id="compgap-${c.id}"></div><div id="compkw-${c.id}"></div></div>`;
     }).join('');
     $('#compList').innerHTML = usCard + (cards ||
-      `<div class="empty" style="margin-top:12px">No competitors yet — add one (e.g. justcasino.com, spinrisecasinoau.com).</div>`);
+      `<div class="empty" style="margin-top:12px">No competitors yet — add one (e.g. casinopro.example, acepoker.example).</div>`);
     document.querySelectorAll('[data-refresh]').forEach(b => b.addEventListener('click', async () => {
       b.disabled = true; b.textContent = '…';
       try { await api(`/api/p/${p}/competitors/${b.dataset.refresh}/refresh`, { method: 'POST' }); render(); }
@@ -1261,7 +1261,7 @@ async function viewCompetitors() {
   }
   view(head('Competitors', activeName()) + `
     <div class="toolbar">
-      <input id="compDomain" type="text" class="grow" placeholder="competitor domain, e.g. justcasino.com">
+      <input id="compDomain" type="text" class="grow" placeholder="competitor domain, e.g. casinopro.example">
       <input id="compLabel" type="text" placeholder="label (optional)">
       <button class="btn primary" id="compAdd">Add competitor</button><span id="compMsg" class="mut"></span></div>
     <div id="compList"><div class="loading">Loading…</div></div>`);
