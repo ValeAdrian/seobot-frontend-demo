@@ -2361,10 +2361,10 @@ async function viewLogs() {
 
 // ---- decision engine (Thoughts + Decisions) ----
 function _callBadge(label, c) {
-  if (!c || c.yes == null) return `<span class="mut">${esc(label)}: —</span>`;
-  const v = c.yes ? '<span class="badge">YES</span>' : '<span class="badge off">NO</span>';
-  const conv = c.conviction != null ? ` ${Math.round(c.conviction * 100)}%` : '';
-  return `${esc(label)}: ${v}${conv}`;
+  if (!c || c.yes == null) return `<span class="mut">${esc(label)} —</span>`;
+  const v = c.yes ? '<span class="badge ok">YES</span>' : '<span class="badge off">NO</span>';
+  const conv = c.conviction != null ? ` <span class="tnum mut" style="font-size:12px">${Math.round(c.conviction * 100)}%</span>` : '';
+  return `<span class="mut" style="font-size:11px">${esc(label)}</span> ${v}${conv}`;
 }
 
 async function viewThoughts() {
@@ -2404,24 +2404,37 @@ async function viewDecisions() {
   const ns = kpiData && kpiData.north_star;
   const nsBadge = ns ? `<span class="badge" title="${esc(ns.basis || '')}">★ north-star ${ns.value}${ns.proxy ? ' (proxy)' : ' ' + esc(ns.unit || '')}</span> ` : '';
   const items = list.items || [];
-  const rows = items.map(d => `<tr data-id="${d.id}">
-    <td><b>${esc(d.target)}</b><div class="mut" style="font-size:11px">${esc(d.kind)}</div></td>
-    <td>${_callBadge('Claude', d.anthropic)}</td>
-    <td>${_callBadge('Gemma', d.gemma)}</td>
-    <td style="white-space:nowrap">
-      <button class="btn" data-act="approve" data-id="${d.id}" style="color:var(--pos,#1a7f37)">Approve</button>
-      <button class="btn" data-act="reject" data-id="${d.id}" style="color:var(--neg)">Dismiss</button>
-      <button class="btn" data-act="open" data-id="${d.id}">Details</button>
-    </td></tr>`).join('');
-  const ctl = sb.controlled ? '<span class="badge">controlled</span>' : '<span class="badge off">shadow</span>';
+  const rows = items.map(d => {
+    const ca = d.anthropic, ge = d.gemma;
+    const conflict = ca && ge && ca.yes != null && ge.yes != null && ca.yes !== ge.yes;
+    return `<tr data-id="${d.id}"${conflict ? ' class="conflict"' : ''}>
+      <td><b>${esc(d.target)}</b><div style="margin-top:4px"><span class="tag">${esc(d.kind)}</span>${conflict ? '<span class="badge off" style="margin-left:4px">conflict</span>' : ''}</div></td>
+      <td>${_callBadge('Claude', ca)}</td>
+      <td>${_callBadge('Gemma', ge)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn ok sm" data-act="approve" data-id="${d.id}">Approve</button>
+        <button class="btn danger sm" data-act="reject" data-id="${d.id}">Dismiss</button>
+        <button class="btn sm" data-act="open" data-id="${d.id}">Details</button>
+      </td></tr>`;
+  }).join('');
+  const agree = sb.agreement_rate != null ? Math.round(sb.agreement_rate * 100) + '%' : '—';
+  const ctl = sb.controlled ? '<span class="badge ok">controlled</span>' : '<span class="badge off">shadow</span>';
   view(head('Decisions', activeName()) + `
-    <div class="toolbar"><span class="mut" style="font-size:12px">${items.length} awaiting your call · agreement ${sb.agreement_rate != null ? Math.round(sb.agreement_rate * 100) + '%' : '—'} over ${sb.judged || 0} · ${ctl}</span><div class="spacer"></div>${nsBadge}<button class="btn" id="decGap" title="Paid DataForSEO pull">Find competitor gaps</button><button class="btn" id="decBonus">Check bonus freshness</button><button class="btn" id="decRefresh">Refresh</button></div>
-    <div id="decMsg" style="margin-top:6px;font-size:12.5px"></div>
-    <div class="card" style="margin-top:10px;padding:4px 4px 8px">
+    <div class="card" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 18px">
+      <span class="sec-h">${icon('decisions')} ${items.length} awaiting your call</span>
+      <span class="mut" style="font-size:12.5px">Gemma${icon('compare', 'sm')}Claude agreement <b class="tnum">${agree}</b> over ${sb.judged || 0} · ${ctl}</span>
+      <div class="spacer"></div>${nsBadge}
+      <button class="btn sm" id="decGap" title="Paid DataForSEO pull">${icon('competitors', 'sm')} Find competitor gaps</button>
+      <button class="btn sm" id="decBonus">${icon('zap', 'sm')} Check bonus freshness</button>
+      <button class="btn sm" id="decRefresh">${icon('refresh', 'sm')} Refresh</button>
+    </div>
+    <div id="decMsg" style="margin-top:8px;font-size:12.5px"></div>
+    <div class="card" style="margin-top:12px;padding:4px 4px 8px">
+      <div class="card-head" style="padding:12px 14px 0;margin-bottom:6px"><span class="sec-h" style="font-size:13px">${icon('plan', 'sm')} Decision queue</span></div>
       <table><thead><tr><th>Decision</th><th>Claude</th><th>Gemma</th><th>Your call</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="4"><div class="empty">Nothing awaiting review. The brain is still thinking — see Thoughts.</div></td></tr>'}</tbody></table>
     </div>
-    ${auto ? `<details class="card" style="margin-top:12px"><summary><b>Autonomy</b> <span class="mut">— per-scope level (you promote; auto-apply needs GATE B)</span> ${auto.kill_switch ? '<span class="badge off">KILL SWITCH ON</span>' : ''}</summary>
+    ${auto ? `<details class="card" style="margin-top:12px"><summary class="sec-h" style="font-size:14px">${icon('settings')} Autonomy <span class="mut">— per-scope level (you promote; auto-apply needs GATE B)</span> ${auto.kill_switch ? '<span class="badge off">KILL SWITCH ON</span>' : ''}</summary>
       <div style="margin-top:8px"><label><input type="checkbox" id="autoKill" ${auto.kill_switch ? 'checked' : ''}> Kill switch (halt all actuation)</label></div>
       <table style="margin-top:8px"><thead><tr><th>Scope</th><th>Level (0=shadow)</th><th>Track record</th></tr></thead><tbody>
       ${auto.scopes.map(s => `<tr>

@@ -194,6 +194,13 @@ th.selcol,td:has(.rowsel){width:34px;text-align:center}
 .rowsel,#selAll{cursor:pointer}
 .btn.danger{border-color:rgba(244,99,111,.5);color:var(--neg)}
 .btn.danger:hover{background:rgba(244,99,111,.12);border-color:var(--neg)}
+.btn.ok{border-color:rgba(63,216,150,.5);color:var(--pos)}
+.btn.ok:hover{background:rgba(63,216,150,.12);border-color:var(--pos)}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn .ico{margin:0 -2px}
+/* decision-queue conflict (Gemma vs Claude disagree) */
+tbody tr.conflict{background:rgba(245,177,76,.06)}
+tbody tr.conflict td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
 
 /* Action Plan */
 .plan-first{margin-top:12px;border-color:var(--acc);background:rgba(92,200,255,.05)}
