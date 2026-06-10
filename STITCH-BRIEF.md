@@ -141,3 +141,66 @@ Do it in this order, reusing patterns so the app stays consistent:
 
 For each: take the demo page screenshot, paste the page's purpose (from §C above) + "keep the colour tokens and
 fonts from DESIGN.md; improve hierarchy, density, and states." Iterate until it's clean, then move on.
+
+---
+
+## F) Working *with Stitch specifically* (it has habits — fight them)
+
+Stitch (Google's AI UI generator) defaults to **light, airy, marketing-SaaS** aesthetics, it **simplifies
+dense data into pretty cards**, and it **loses consistency across many separate generations**. The notes below
+are tuned to that. (DESIGN.md + §A–§E above are still the source of truth for *what* to build; this is *how* to
+get good output from the tool.)
+
+### F1) A ready-to-paste FIRST prompt (the shell + new nav, tokens baked in)
+Send this as message #1 in a fresh Stitch project, with a screenshot of the current dark UI attached as the
+style reference:
+
+> Design the app shell and navigation for **seobot**, a dark, self-hosted SEO *operator* dashboard (behind a
+> login — **not** a marketing site; no hero, sign-up, pricing, testimonials, or marketing footer). Use ONLY this
+> dark theme: background `#0a0d12`, panels `#111824`, hairlines `#1c2632`, text `#e7eef5`, muted `#7d8c9b`;
+> accents — blue `#5cc8ff` (brand/links/active nav/primary buttons), green `#3fd896` (positive/up/YES), red
+> `#f4636f` (negative/down/NO), amber `#f5b14c` (caution). Fonts: Roboto (body), Montserrat (headings + the
+> `seo·bot` wordmark, with "bot" in green), IBM Plex Mono (numbers). Rounding 16px cards / 10px controls /
+> 999px pills; soft shadows, flat surfaces, no gradients; a visible blue focus ring. Build a 60px sticky top bar
+> (logo + wordmark, project switcher, a `+ Connect a domain` button, a ⌘K search affordance, a last-updated
+> stamp) and a 236px left sidebar with this grouped IA: **Command** (Overview · Decisions · Thoughts · Action
+> Plan) · **Content** (Content · Opportunities) · **Performance** (Rankings · Search Console · Analytics ·
+> Backlinks · Competitors) · **Site** (Site Health · Indexation) · **Research** (Keyword Research · SERP
+> Inspector · Domain Finder · Bulk Tools · Imports), plus a gear → **Settings** drawer (Connections ·
+> Integrations · Spend · Alerts · Project Settings · Logs · Projects). Active nav item = blue tint background +
+> blue left bar. Show it framing a placeholder Overview. Give me a desktop 1360px frame **and** a mobile variant
+> where the sidebar collapses to a drawer. Output dark HTML + Tailwind.
+
+### F2) Operational tips (so it stays consistent)
+- **One project/thread, screen-by-screen** in the §E order — Stitch keeps visual memory within a chat. Never
+  "redesign everything" in one prompt.
+- **Use Experimental / high-effort mode** for the dense screens (Overview, Decisions, tables) — it holds detail
+  far better. Free generations are limited, so spend them on the high-leverage screens (shell, Overview,
+  Decisions, one table, one form) and **derive the rest**: "apply this exact Rankings table pattern to
+  Backlinks, Competitors, Indexation."
+- **Generate a tokens/components screen BEFORE any page**: buttons (default/primary/danger), badges
+  (ok/off/shadow), a stat tile, one data-table row, inputs, sub-tabs, the help accordion, a grade badge, an
+  empty state. Lock it, then build pages from it — this is what keeps 30+ screens coherent.
+
+### F3) Guardrails Stitch WILL break unless you say so
+- **All data stays fictional** — "use only made-up casino names ending in `.example`; never invent or use a
+  real brand or domain." (This repo was scrubbed of a real live casino domain for exactly this reason.)
+- **Don't drop data** — density is a feature; keep every table column. It loves to flatten tables into cards.
+- **Keep semantic colour** — green = YES/up/healthy, red = NO/down/danger, amber = caution, blue = brand. No
+  recolouring for aesthetics.
+- **Don't add or remove pages/features** — redesign what's in the screenshots; the nav reinvention (§B) is the
+  *only* structural change wanted.
+- **Preserve the decision-loop meaning** on Decisions/Thoughts: a local model (**Gemma**) proposes → a stronger
+  model (**Claude**) reviews → the human decides. The two opinions + conviction % + agreement rate *are* the
+  design — don't flatten it into a generic "approve" inbox.
+
+### F4) Output asks
+- **HTML + Tailwind** (closest to this vanilla no-build SPA; React would add a build step we don't use).
+- **Free, self-hostable icons only** (Lucide or Phosphor) — nothing paid/attribution-bound, no CDN (the app
+  runs behind a login and vendors its assets).
+- Desktop **1360px** + mobile **≤860px** frames at least for the shell, Overview, and Decisions.
+
+### F5) "Done" bar before moving to the next screen
+A screen is finished when it reads in the dark theme with the exact tokens, the hierarchy leads with the most
+important thing (north-star / pending decisions), tables are dense and scannable, and it has **empty + loading +
+error** states. Then: "apply this exact style to `<next page>`."
