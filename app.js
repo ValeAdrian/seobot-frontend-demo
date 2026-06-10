@@ -356,10 +356,10 @@ function serpCard(d) {
     `<span class="tag">${esc(f.feature.replace(/_/g, ' '))} · ${f.keywords}</span>`).join(' ') || '<span class="mut">none</span>';
   const owners = (d.owners || []).slice(0, 10).map(o =>
     `<tr><td>${esc(o.domain)}</td><td class="tnum">${o.appearances}</td></tr>`).join('') || '<tr><td colspan="2"><span class="mut">—</span></td></tr>';
-  return `<div class="card" style="margin-top:14px"><h3>🔎 SERP features <span class="mut" style="font-size:11px">across ${d.keywords_with_serp} tracked SERPs</span></h3>
+  return `<div class="card" style="margin-top:14px"><h3 class="sec-h">${icon('serp', 'sm')} SERP features <span class="mut" style="font-size:11px">across ${d.keywords_with_serp} tracked SERPs</span></h3>
     <p class="mut" style="font-size:12px;margin:4px 0 8px">Which SERP elements appear on the keywords you target, and which domains own the organic results. Captured free from the daily rank pull.</p>
     <div>${feats}</div>
-    <div class="card" style="margin-top:12px;max-width:440px;padding:4px 4px 8px"><h3 style="font-size:13px;padding:8px 8px 2px">Who owns these SERPs</h3>
+    <div class="card" style="margin-top:12px;max-width:440px;padding:4px 4px 8px"><h3 class="sec-h" style="font-size:13px;padding:8px 8px 2px">${icon('globe', 'sm')} Who owns these SERPs</h3>
       <table><thead><tr><th>Domain</th><th>In top-5 of N</th></tr></thead><tbody>${owners}</tbody></table></div></div>`;
 }
 
@@ -373,7 +373,7 @@ function strategistCard(strat) {
        <div class="mut" style="font-size:10.5px;margin-top:6px">${esc((b.created_at || '').slice(0, 10))}${b.reason ? ' · ' + esc(b.reason) : ''}</div>`
     : `<div class="mut" style="font-size:12.5px;margin-top:6px">No briefing yet — generate the first one, or wait for the daily pass.</div>`;
   return `<div class="card" id="stratCard" style="margin-top:14px">
-    <div class="row" style="align-items:center"><h3 style="flex:0">🧠 AI strategist</h3>
+    <div class="row" style="align-items:center"><h3 class="sec-h" style="flex:0">${icon('brain', 'sm')} AI strategist</h3>
       <div class="spacer"></div>
       <button class="btn" id="stratRun">${b ? 'Refresh' : 'Generate'}</button></div>
     ${body}</div>`;
@@ -723,10 +723,10 @@ async function viewReport() {
       ${tile('Toxic links', b ? b.toxic : '—', true)}
     </div>
     <div class="row" style="margin-top:14px;align-items:flex-start">
-      <div class="card"><h3>Top climbers</h3><table><thead><tr><th>Keyword</th><th>Pos</th><th>Δ</th></tr></thead><tbody>${moverList(r.movers_up, 'move-up', '+')}</tbody></table></div>
-      <div class="card"><h3>Top fallers</h3><table><thead><tr><th>Keyword</th><th>Pos</th><th>Δ</th></tr></thead><tbody>${moverList(r.movers_down, 'move-down', '-')}</tbody></table></div>
+      <div class="card"><h3 class="sec-h">${icon('up', 'sm')} Top climbers</h3><table><thead><tr><th>Keyword</th><th>Pos</th><th>Δ</th></tr></thead><tbody>${moverList(r.movers_up, 'move-up', '+')}</tbody></table></div>
+      <div class="card"><h3 class="sec-h">${icon('down', 'sm')} Top fallers</h3><table><thead><tr><th>Keyword</th><th>Pos</th><th>Δ</th></tr></thead><tbody>${moverList(r.movers_down, 'move-down', '-')}</tbody></table></div>
     </div>
-    <div class="card" style="margin-top:14px;padding:4px 4px 8px"><h3 style="padding:10px 10px 4px">Top opportunities</h3>
+    <div class="card" style="margin-top:14px;padding:4px 4px 8px"><h3 class="sec-h" style="padding:10px 10px 4px">${icon('opportunities', 'sm')} Top opportunities</h3>
       <table><thead><tr><th>Score</th><th>Keyword</th><th>Why</th></tr></thead><tbody>${oppList || '<tr><td colspan="3"><span class="mut">none</span></td></tr>'}</tbody></table></div>
     ${b ? `<p class="mut" style="font-size:11.5px;margin-top:10px">Backlinks: DR ${b.domain_rating} · ${b.refdomains} referring domains · <b>${b.toxic} toxic</b>.</p>` : ''}`);
   $('#repSend').addEventListener('click', async () => {
@@ -881,7 +881,7 @@ async function viewActionPlan(live = false) {
       <button class="btn" id="planExport">Export CSV</button>
     </div>
     <div id="planAiPanel" style="margin:6px 0"></div>
-    <div class="card plan-first"><h3 style="padding:10px 12px 2px">⭐ Do these first</h3>
+    <div class="card plan-first"><h3 class="sec-h" style="padding:10px 12px 2px">${icon('zap', 'sm')} Do these first</h3>
       <div class="plan-grid" style="padding:6px 8px 10px">${top.map(t => planCard(t)).join('') || '<span class="mut" style="padding:8px">All caught up — nothing outstanding. 🎉</span>'}</div></div>
     ${sections}`);
   const setTaskState = async (key, status) => {
@@ -940,7 +940,7 @@ async function viewImports() {
   };
   view(head('Imports', activeName()) + `
     <div class="card">
-      <h3>Import Ahrefs CSV</h3>
+      <h3 class="sec-h">${icon('imports', 'sm')} Import Ahrefs CSV</h3>
       <p class="mut" style="font-size:12.5px">Upload an Ahrefs keyword export (Organic keywords / Positions). Keywords are parsed and stored under this project.</p>
       <div class="row" style="align-items:center">
         <input id="impFile" type="file" accept=".csv,text/csv" style="flex:2">
@@ -982,7 +982,7 @@ async function viewAlerts() {
   const chk = (id, on, label) => `<label style="font-size:12.5px"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${label}</label>`;
   view(head('Alerts', activeName()) + `
     <div class="card">
-      <h3>Movement alert rules</h3>
+      <h3 class="sec-h">${icon('alerts', 'sm')} Movement alert rules</h3>
       <p class="mut" style="font-size:12.5px">Telegram alerts run after each rank pull. Delivery is gated by <code>SEOBOT_ALERTS_ENABLED</code> + a bot token.</p>
       <div class="row">
         <div class="field"><label>"Top N" boundary</label><input id="arTop" type="number" min="1" max="100" value="${r.top_threshold}"></div>
@@ -998,7 +998,7 @@ async function viewAlerts() {
         <span id="arMsg" class="mut" style="margin-left:8px;font-size:12.5px"></span></div>
     </div>
     <div class="card" style="margin-top:14px;padding:4px 4px 8px">
-      <h3 style="padding:10px 10px 4px">Preview <span class="mut" style="font-size:11px">${d.matching} keyword(s) would alert now</span></h3>
+      <h3 class="sec-h" style="padding:10px 10px 4px">${icon('search', 'sm')} Preview <span class="mut" style="font-size:11px">${d.matching} keyword(s) would alert now</span></h3>
       <table><thead><tr><th>Keyword</th><th>Alert</th><th>Move</th></tr></thead>
       <tbody>${preview || '<tr><td colspan="3"><span class="mut">nothing matches the current rules</span></td></tr>'}</tbody></table></div>`);
   $('#arSave').addEventListener('click', async () => {
@@ -1029,7 +1029,7 @@ async function viewProjectSettings() {
   const kv = await api(`/api/p/${p}/settings`);
   view(head('Project Settings', activeName()) + `
     <div class="card">
-      <h3>Project</h3>
+      <h3 class="sec-h">${icon('settings', 'sm')} Project</h3>
       <div class="row">
         <div class="field"><label>Name</label><input id="psName" type="text" value="${esc(proj.name)}"></div>
         <div class="field"><label>Primary domain</label><input id="psDomain" type="text" value="${esc(proj.primary_domain)}"></div>
@@ -1044,7 +1044,7 @@ async function viewProjectSettings() {
       <span id="psMsg" class="mut" style="margin-left:10px;font-size:12.5px"></span>
     </div>
     <div class="card" style="margin-top:14px">
-      <h3>Domain Finder thresholds</h3>
+      <h3 class="sec-h">${icon('domains', 'sm')} Domain Finder thresholds</h3>
       <p class="mut" style="font-size:12.5px">The daily monitor auto-adds a dropped/auction domain + alerts you when it's relevant enough AND authoritative/aged enough. Tune the bars here.</p>
       <div class="row">
         <div class="field"><label>Min relevancy (0–100)</label><input id="dtRel" type="number" min="0" max="100" value="${esc(kv.domain_min_relevancy ?? 55)}"></div>
@@ -1056,7 +1056,7 @@ async function viewProjectSettings() {
       <span id="dtMsg" class="mut" style="margin-left:10px;font-size:12.5px"></span>
     </div>
     <div class="card" style="margin-top:14px">
-      <h3>Settings (key / value)</h3>
+      <h3 class="sec-h">${icon('settings', 'sm')} Settings (key / value)</h3>
       <div id="kvRows">${kvRows(kv)}</div>
       <button class="btn" id="kvAdd">+ Add row</button>
       <button class="btn primary" id="kvSave">Save settings</button>
@@ -1104,7 +1104,7 @@ async function viewProjects() {
   state.projects = data.items; state.active = data.active_slug;
   view(head('Projects', 'Global') + `
     <div class="card">
-      <h3>Create project</h3>
+      <h3 class="sec-h">${icon('projects', 'sm')} Create project</h3>
       <div class="row">
         <div class="field"><label>Name</label><input id="npName" type="text" placeholder="Demo Casino"></div>
         <div class="field"><label>Primary domain</label><input id="npDomain" type="text" placeholder="demo-casino.example"></div>
@@ -1148,7 +1148,7 @@ async function viewIntegrations() {
     const cards = list.items.map(p => {
       if (p.provider === 'dataforseo') {
         return `<div class="card">
-          <div class="row" style="align-items:center"><h3 style="flex:0">DataForSEO</h3>
+          <div class="row" style="align-items:center"><h3 class="sec-h" style="flex:0">${icon('integrations', 'sm')} DataForSEO</h3>
             <span class="badge ${INT_BADGE[dfs.status] || 'off'}">${esc(dfs.status)}</span>
             <div class="spacer"></div><button class="btn primary" id="intTest">Test connection</button></div>
           <p class="mut" style="font-size:12.5px">Credentials live in <code>.env</code> (never the database). SERP, Keywords Data, Labs and OnPage are subscribed; Backlinks is not (sourced via Ahrefs CSV).</p>
@@ -1157,7 +1157,7 @@ async function viewIntegrations() {
           <div id="intMsg" class="mut" style="font-size:12.5px;margin-top:8px"></div></div>`;
       }
       return `<div class="card" style="margin-top:12px">
-        <div class="row" style="align-items:center"><h3 style="flex:0">${esc(p.name)}</h3>
+        <div class="row" style="align-items:center"><h3 class="sec-h" style="flex:0">${icon('integrations', 'sm')} ${esc(p.name)}</h3>
           <span class="badge ${INT_BADGE[p.status] || 'off'}">${esc(p.status)}</span>
           <span class="tag">${esc(p.kind)}</span><span class="tag">${esc(p.scope)}</span></div>
         <p class="mut" style="font-size:12.5px;margin-top:6px">${esc(p.note || '')}</p>
@@ -1187,7 +1187,7 @@ async function viewGlobalSettings() {
   const kv = await api('/api/settings');
   view(head('Settings', 'Global') + `
     <div class="card">
-      <h3>Global settings (key / value)</h3>
+      <h3 class="sec-h">${icon('settings', 'sm')} Global settings (key / value)</h3>
       <div id="kvRows">${kvRows(kv)}</div>
       <button class="btn" id="kvAdd">+ Add row</button>
       <button class="btn primary" id="kvSave">Save</button>
@@ -1461,7 +1461,7 @@ async function viewSiteAudit() {
       <div id="auMsg" class="mut" style="margin-top:8px"></div>
     </div>
     <div id="auGrade" style="margin-top:14px">${gradeCard(data.items[0])}</div>
-    <h3 style="margin:22px 0 0">Audit history</h3>
+    <h3 class="sec-h" style="margin:22px 0 0">${icon('audit', 'sm')} Audit history</h3>
     <div id="auHistory">${renderHistory(data.items)}</div>`);
   $('#auRun').addEventListener('click', async () => {
     const url = $('#auUrl').value.trim();
@@ -1488,7 +1488,7 @@ function gradeCard(a) {
   return `<div class="card" style="border-color:var(--acc)">
     <div class="row" style="align-items:center;gap:14px">
       <div class="grade-badge ${cls}">${esc(g.letter)}</div>
-      <div style="flex:1"><h3 style="flex:0">Page grade · ${g.score}/100</h3>
+      <div style="flex:1"><h3 class="sec-h" style="flex:0">${icon('health', 'sm')} Page grade · ${g.score}/100</h3>
         <div class="mut" style="font-size:12px">${esc(shortUrl(a.url))} · ${g.passed ?? '—'}/${g.checks_total ?? '—'} checks passed · ${g.failed} flagged</div></div>
     </div>
     ${cats || '<div class="mut" style="font-size:12px;margin-top:8px">No issues flagged — clean page. 🎉</div>'}
@@ -1519,7 +1519,7 @@ async function viewCrawl() {
         ${tile('External links', s.links_external ?? '—', true)}
       </div>
       <div class="card" style="margin-top:14px;padding:4px 4px 8px">
-        <h3 style="padding:10px 10px 4px">Issues found <span class="mut" style="font-size:11px">site-wide · worst first</span></h3>
+        <h3 class="sec-h" style="padding:10px 10px 4px">${icon('audit', 'sm')} Issues found <span class="mut" style="font-size:11px">site-wide · worst first</span></h3>
         <table><thead><tr><th>Issue</th><th>Pages</th></tr></thead>
         <tbody>${issues || '<tr><td colspan="2"><span class="mut">no issues flagged 🎉</span></td></tr>'}</tbody></table></div>
       <p class="mut" style="font-size:11.5px;margin-top:10px">Crawled ${esc(c.target)} · ${esc(c.completed_at || '')} · DataForSEO OnPage.</p>`;
@@ -1589,7 +1589,7 @@ async function viewRankCompare() {
       <div class="spacer"></div>
       <button class="btn" id="rcExport" title="Download the comparison">Export CSV</button></div>
     <div class="card" style="padding:4px 4px 8px">
-      <h3 style="padding:10px 10px 4px">Per-keyword <span class="mut" style="font-size:11px">where either source has a position</span></h3>
+      <h3 class="sec-h" style="padding:10px 10px 4px">${icon('compare', 'sm')} Per-keyword <span class="mut" style="font-size:11px">where either source has a position</span></h3>
       <table><thead><tr><th>Keyword</th><th>DataForSEO</th><th>Ahrefs</th><th>Δ (DFS−Ah)</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="4"><span class="mut">no rank data from either source yet — run both rank pulls</span></td></tr>'}</tbody></table></div>
     <p class="mut" style="font-size:11.5px;margin-top:10px">"Only Ahrefs" = positions Ahrefs has that DataForSEO doesn't (coverage). Smaller Avg |Δ| = closer agreement between sources.</p>`);
@@ -1608,13 +1608,13 @@ async function viewBulkTools() {
   const p = state.active;
   if (!p) return view(head('Bulk Tools') + `<div class="empty">No project yet.</div>`);
   view(head('Bulk Tools', activeName()) + `
-    <div class="card"><h3>Bulk volume + KD</h3>
+    <div class="card"><h3 class="sec-h">${icon('bulk', 'sm')} Bulk volume + KD</h3>
       <p class="mut" style="font-size:12.5px">Paste keywords (one per line) → search volume, CPC and difficulty in one table.</p>
       <textarea id="btInput" rows="6" placeholder="one keyword per line"></textarea>
       <div id="btCost" class="costbar mut">…</div>
       <button class="btn primary" id="btRun">Run</button><span id="btMsg" class="mut" style="margin-left:10px"></span>
       <div id="btResult" style="margin-top:14px"></div></div>
-    <div class="card" style="margin-top:14px"><h3>Tags <span class="mut" id="tagCount" style="font-size:12px"></span></h3>
+    <div class="card" style="margin-top:14px"><h3 class="sec-h">${icon('bulk', 'sm')} Tags <span class="mut" id="tagCount" style="font-size:12px"></span></h3>
       <p class="mut" style="font-size:12.5px">Every tag in the project. <b>Rename</b> merges into an existing tag; <b>delete</b> removes it from all keywords.</p>
       <div id="tagList" class="card" style="padding:4px 4px 8px">Loading…</div></div>`);
   const loadTags = async () => {
@@ -1757,11 +1757,11 @@ function cwvHtml(d) {
       ${tile('TBT', dv('tbt'), true)}
     </div>
     <div class="row" style="margin-top:12px;align-items:flex-start">
-      <div class="card"><h3>Lab (Lighthouse)</h3><table>
+      <div class="card"><h3 class="sec-h">${icon('audit', 'sm')} Lab (Lighthouse)</h3><table>
         ${labRow('fcp', 'First Contentful Paint')}${labRow('lcp', 'Largest Contentful Paint')}
         ${labRow('cls', 'Cumulative Layout Shift')}${labRow('tbt', 'Total Blocking Time')}
         ${labRow('speed_index', 'Speed Index')}${labRow('tti', 'Time to Interactive')}</table></div>
-      <div class="card"><h3>Field · real users <span class="mut" style="font-size:11px">${d.field_overall ? esc(d.field_overall) : 'no CrUX data'}</span></h3>
+      <div class="card"><h3 class="sec-h">${icon('pulse', 'sm')} Field · real users <span class="mut" style="font-size:11px">${d.field_overall ? esc(d.field_overall) : 'no CrUX data'}</span></h3>
         ${fk.length ? `<table>${fk.map(k => `<tr><td>${esc(k.toUpperCase())}</td><td class="tnum">${field[k].percentile ?? '—'}</td><td>${catBadge(field[k].category)}</td></tr>`).join('')}</table>`
           : '<p class="mut" style="font-size:12px">Not enough real-user traffic for field data yet — the lab scores above still apply.</p>'}</div>
     </div>`;
@@ -1908,7 +1908,7 @@ async function viewBing() {
       ${tile('Queries', (d.queries || []).length, true)}
     </div>
     <div class="card" style="margin-top:14px;padding:4px 4px 8px">
-      <h3 style="padding:10px 10px 4px">Top queries <span class="mut" style="font-size:11px">${esc(d.site)}</span></h3>
+      <h3 class="sec-h" style="padding:10px 10px 4px">${icon('globe', 'sm')} Top queries <span class="mut" style="font-size:11px">${esc(d.site)}</span></h3>
       <table><thead><tr><th>Query</th><th>Clicks</th><th>Impr.</th><th>Click pos</th><th>Impr pos</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="5"><span class="mut">no Bing impressions yet — data appears once Bing indexes traffic</span></td></tr>'}</tbody></table></div>
     <p class="mut" style="font-size:11.5px;margin-top:10px">Source: Bing Webmaster Tools API · verified site ${esc(d.site)}.</p>`);
@@ -1964,8 +1964,8 @@ async function viewSpend() {
       </div>
     </div>
     <div class="row" style="margin-top:14px;align-items:flex-start">
-      <div class="card"><h3>By project</h3><table><thead><tr><th>Project</th><th>Calls</th><th>Cost</th></tr></thead><tbody>${proj}</tbody></table></div>
-      <div class="card"><h3>By endpoint</h3><table><thead><tr><th>Endpoint</th><th>Calls</th><th>Cost</th></tr></thead><tbody>${eps}</tbody></table></div>
+      <div class="card"><h3 class="sec-h">${icon('projects', 'sm')} By project</h3><table><thead><tr><th>Project</th><th>Calls</th><th>Cost</th></tr></thead><tbody>${proj}</tbody></table></div>
+      <div class="card"><h3 class="sec-h">${icon('analytics', 'sm')} By endpoint</h3><table><thead><tr><th>Endpoint</th><th>Calls</th><th>Cost</th></tr></thead><tbody>${eps}</tbody></table></div>
     </div>
 
     <div class="sec-h" style="margin:28px 0 0;font-size:16px">${icon('brain')} AI assistant cost</div>
@@ -1976,10 +1976,10 @@ async function viewSpend() {
       ${tile('AI · Today', fmt4(ai.today), true)}
     </div>
     <div class="row" style="margin-top:14px;align-items:flex-start">
-      <div class="card"><h3>By purpose <span class="mut" style="font-size:11px">MTD</span></h3>
+      <div class="card"><h3 class="sec-h">${icon('brain', 'sm')} By purpose <span class="mut" style="font-size:11px">MTD</span></h3>
         <table><thead><tr><th>Purpose</th><th>Calls</th><th>Tokens</th><th>Cost</th></tr></thead>
         <tbody>${aiPurpose || '<tr><td colspan="4"><span class="mut">No AI usage yet — add SEOBOT_AI_API_KEY to enable.</span></td></tr>'}</tbody></table></div>
-      <div class="card"><h3>By model <span class="mut" style="font-size:11px">MTD</span></h3>
+      <div class="card"><h3 class="sec-h">${icon('brain', 'sm')} By model <span class="mut" style="font-size:11px">MTD</span></h3>
         <table><thead><tr><th>Model</th><th>Calls</th><th>Tokens</th><th>Cost</th></tr></thead>
         <tbody>${aiModel || '<tr><td colspan="4"><span class="mut">—</span></td></tr>'}</tbody></table></div>
     </div>`);
@@ -2034,7 +2034,7 @@ async function viewDomains() {
       <div class="row" style="margin-top:6px;align-items:center"><label class="mut" style="font-size:12px"><input type="checkbox" id="domPasteEnrich"> Score authority + history (slower)</label><div class="spacer"></div><button class="btn" id="domImport">Score list</button></div>
     </details>
     <div id="domResultsWrap" style="margin-top:14px"></div>
-    <div class="row" style="margin:26px 0 0;align-items:center"><h3 style="flex:0">⭐ Watchlist <span class="mut" style="font-size:11px">(${wl.total})</span></h3><div class="spacer"></div>${wl.total ? '<button class="btn" id="domExport">Export CSV</button>' : ''}</div>
+    <div class="row" style="margin:26px 0 0;align-items:center"><h3 class="sec-h" style="flex:0">${icon('star', 'sm')} Watchlist <span class="mut" style="font-size:11px">(${wl.total})</span></h3><div class="spacer"></div>${wl.total ? '<button class="btn" id="domExport">Export CSV</button>' : ''}</div>
     <div class="card" style="margin-top:10px;padding:4px 4px 8px" id="domWatch"></div>`);
 
   const showResults = (d, label) => {
@@ -2200,7 +2200,7 @@ async function viewConnections() {
     try {
       const c = await api(`/api/p/${p}/connections`, { method: 'POST', body: JSON.stringify({ name }) });
       $('#connToken').innerHTML = `<div class="card" style="border-color:var(--acc);margin-top:10px">
-        <h3>🔑 Pairing token for “${esc(c.name)}”</h3>
+        <h3 class="sec-h">${icon('connections', 'sm')} Pairing token for “${esc(c.name)}”</h3>
         <p class="mut" style="font-size:12px">Copy this now — it's shown <b>only once</b>. Paste it into the seobot Connector plugin on the site.</p>
         <textarea readonly rows="2" style="width:100%;font:12px var(--mono)" onclick="this.select()">${esc(c.token)}</textarea>
         <ol class="mut" style="font-size:12px;line-height:1.6">
@@ -2348,24 +2348,24 @@ async function viewConnect() {
     <p class="mut" style="font-size:12.5px">Spin up a site: create the project → connect data sources → pair the site (plugin) → seed keywords + a starter content plan → and the autonomy brain starts watching. Each step unlocks the next.</p>
     <div id="wizMsg" style="font-size:12.5px;margin:8px 0"></div>
     <div id="wzIntegr" style="font-size:12px;margin:4px 0"></div>
-    <div class="card" style="margin-top:8px"><h3>1 · Create project</h3>
+    <div class="card" style="margin-top:8px"><h3 class="sec-h">${icon('projects', 'sm')} 1 · Create project</h3>
       <div class="toolbar">
         <input id="wzName" class="grow" placeholder="name — e.g. Demo Casino">
         <input id="wzDomain" placeholder="domain — e.g. demo-casino.example">
         <select id="wzMarket"><option>AU</option><option>US</option><option>UK</option><option>NZ</option><option>CA</option></select>
         <button class="btn primary" id="wzCreate">Create →</button>
       </div></div>
-    <div class="card" id="wzStep2" style="margin-top:8px;opacity:.45;pointer-events:none"><h3>2 · Pair the site</h3>
+    <div class="card" id="wzStep2" style="margin-top:8px;opacity:.45;pointer-events:none"><h3 class="sec-h">${icon('connections', 'sm')} 2 · Pair the site</h3>
       <div class="toolbar"><input id="wzConnName" class="grow" placeholder="connection name — e.g. the site URL"><button class="btn" id="wzConnBtn">Create pairing token →</button></div>
       <div id="wzToken"></div></div>
-    <div class="card" id="wzStep3" style="margin-top:8px;opacity:.45;pointer-events:none"><h3>3 · Keywords + starter content</h3>
+    <div class="card" id="wzStep3" style="margin-top:8px;opacity:.45;pointer-events:none"><h3 class="sec-h">${icon('key', 'sm')} 3 · Keywords + starter content</h3>
       <textarea id="wzKw" rows="3" style="width:100%;margin-bottom:6px" placeholder="one keyword per line (optional — blank uses the project's tracked keywords)"></textarea>
       <div class="toolbar"><label class="mut" style="font-size:12px"><input type="checkbox" id="wzGround"> auto-ground (SERP)</label>
         <button class="btn" id="wzTrack">Track keywords</button>
         <button class="btn primary" id="wzPlan">Generate drafts</button><div class="spacer"></div>
         <button class="btn" id="wzGoContent">Open Content →</button></div>
       <div id="wzPlanMsg" style="margin-top:6px"></div></div>
-    <div class="card" id="wzStep4" style="margin-top:8px;opacity:.45;pointer-events:none"><h3>4 · Your autonomy brain is watching</h3>
+    <div class="card" id="wzStep4" style="margin-top:8px;opacity:.45;pointer-events:none"><h3 class="sec-h">${icon('brain', 'sm')} 4 · Your autonomy brain is watching</h3>
       <p class="mut" style="font-size:12px">seobot now monitors this site and turns opportunities into scored decisions — local Gemma proposes, Claude reviews in batches, and you approve. Nothing edits your site without you (shadow / level 0). Watch it think + act:</p>
       <div class="toolbar"><button class="btn" id="wzGoThoughts">Open Thoughts →</button><button class="btn" id="wzGoDecisions">Open Decisions →</button></div></div>`);
   const unlock = id => { const el = $('#' + id); el.style.opacity = 1; el.style.pointerEvents = 'auto'; };
