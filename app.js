@@ -504,7 +504,7 @@ async function viewRank() {
         <option value="unranked">Unranked</option>
       </select>
       <select id="fTag"><option value="">All tags</option></select>
-      <button class="btn" id="rankExport" title="Download the filtered table">Export CSV</button>
+      <button class="btn sm" id="rankExport" title="Download the filtered table">${icon('download', 'sm')} Export CSV</button>
     </div>
     <div class="bulkbar" id="rankBulk" style="display:none">
       <span><b id="rankSelCount">0</b> selected</span>
@@ -517,6 +517,7 @@ async function viewRank() {
       <button class="btn danger" id="bulkDelete">Delete selected</button>
     </div>
     <div class="card" style="padding:4px 4px 10px">
+      <div class="card-head" style="padding:12px 12px 4px">${secH('rank', 'Tracked keywords')}<div class="spacer"></div><span class="tag">Tracker</span></div>
       <table>
         <thead><tr><th class="selcol"><input type="checkbox" id="selAll" title="Select all on page"></th><th>Keyword</th><th>Tags</th><th>Pos</th><th>Prev</th><th>Move</th><th>Vol</th><th>KD</th><th>URL</th><th>Checked</th></tr></thead>
         <tbody id="rankBody"><tr><td colspan="10"><div class="loading">Loading…</div></td></tr></tbody>
@@ -763,22 +764,23 @@ async function viewOpportunities() {
   ]);
   const clusters = (cl.items || []).slice(0, 8);
   const clusterCards = clusters.map(c => `
-    <div class="card tile opp-cluster" data-cluster="${esc(c.cluster)}" style="cursor:pointer">
-      <div class="k">${esc(c.cluster)}</div><div class="v tnum">${c.avg_opportunity}</div>
-      <div class="mut" style="font-size:10.5px">${c.keywords} kw · ${c.top10} top10 · ${(c.total_volume || 0).toLocaleString()} vol</div>
+    <div class="card stat hov opp-cluster" data-cluster="${esc(c.cluster)}" style="cursor:pointer">
+      <div class="stat-top"><span class="k">${esc(c.cluster)}</span>${icon('opportunities', 'stat-ico')}</div>
+      <div class="v tnum">${c.avg_opportunity}</div>
+      <div class="mut" style="font-size:10.5px;margin-top:5px">${c.keywords} kw · ${c.top10} top10 · ${(c.total_volume || 0).toLocaleString()} vol</div>
     </div>`).join('');
   const rowsHtml = (opp.items || []).map(oppRow).join('');
   view(head('Opportunities', activeName()) + `
     <p class="mut" style="font-size:12.5px">Scored from live rank + volume + KD + intent — higher = better ROI. Weighted: position 45% · volume 30% · KD 15% · intent 10%. Click a keyword for its history.</p>
-    <div class="grid tiles">${clusterCards || '<span class="mut">No clusters yet — tag your keywords to group them into silos.</span>'}</div>
-    <div class="toolbar" style="margin-top:14px">
-      <select id="oppCluster"><option value="">All clusters</option>${clusters.map(c => `<option>${esc(c.cluster)}</option>`).join('')}</select>
-      <div class="spacer"></div>
-      <span class="mut" style="font-size:12px"><b id="oppTotal">${opp.total}</b> keywords scored</span>
-      <button class="btn" id="oppEnrich" title="Pull DataForSEO volume + KD for keywords missing them">Enrich Vol/KD</button>
-      <button class="btn" id="oppExport">Export CSV</button>
-    </div>
-    <div class="card" style="padding:4px 4px 10px">
+    ${clusters.length ? `<div class="card-head" style="margin-top:6px">${secH('opportunities', 'Keyword clusters')}</div>
+    <div class="grid tiles">${clusterCards}</div>` : ''}
+    <div class="card" style="margin-top:16px;padding:4px 4px 10px">
+      <div class="card-head" style="padding:12px 12px 4px;flex-wrap:wrap">${secH('opportunities', 'Scored keywords')}
+        <div class="spacer"></div>
+        <select id="oppCluster"><option value="">All clusters</option>${clusters.map(c => `<option>${esc(c.cluster)}</option>`).join('')}</select>
+        <span class="mut" style="font-size:12px"><b id="oppTotal">${opp.total}</b> scored</span>
+        <button class="btn sm" id="oppEnrich" title="Pull DataForSEO volume + KD for keywords missing them">${icon('zap', 'sm')} Enrich Vol/KD</button>
+        <button class="btn sm" id="oppExport">${icon('download', 'sm')} Export CSV</button></div>
       <table><thead><tr><th>Score</th><th>Keyword</th><th>Pos</th><th>Band</th><th>Vol</th><th>KD</th><th>Why</th></tr></thead>
       <tbody id="oppBody">${rowsHtml || '<tr><td colspan="7"><div class="empty">No keywords yet.</div></td></tr>'}</tbody></table>
     </div>`);
@@ -1243,7 +1245,7 @@ async function viewKeywordResearch() {
     <div class="subtabs" id="krTabs">${KR_TABS.map(t =>
       `<button class="subtab ${t.kind === state._krKind ? 'active' : ''}" data-kind="${t.kind}">${t.label}</button>`).join('')}</div>
     <div class="card"><div id="krBody"></div></div>
-    <div class="card" style="margin-top:14px"><h3>Recent queries</h3><div id="krHistory" class="mut">…</div></div>`);
+    <div class="card" style="margin-top:14px"><div class="card-head">${secH('search', 'Recent queries')}</div><div id="krHistory" class="mut">…</div></div>`);
   $('#krTabs').querySelectorAll('.subtab').forEach(b => b.addEventListener('click', () => {
     state._krKind = b.dataset.kind;
     $('#krTabs').querySelectorAll('.subtab').forEach(x => x.classList.toggle('active', x.dataset.kind === state._krKind));
@@ -1351,20 +1353,20 @@ async function viewCompetitors() {
   async function render() {
     const data = await api(`/api/p/${p}/competitors`);
     const us = data.us;
-    const usCard = `<div class="card"><div class="row" style="align-items:baseline">
-      <h3 style="flex:0">${esc(us.domain)} <span class="badge ok">you</span></h3>
-      <div class="mut" style="font-size:12.5px">tracked ${us.tracked} · ranking ${us.count} · top3 ${us.top3} · top10 ${us.top10}</div></div></div>`;
+    const usCard = `<div class="card"><div class="card-head">${secH('competitors', us.domain)} <span class="badge ok">you</span></div>
+      <div class="grid tiles" style="gap:12px">
+        ${tile('Tracked', us.tracked)}${tile('Ranking', us.count, true)}${tile('Top 3', us.top3, true)}${tile('Top 10', us.top10, true)}</div></div>`;
     const cards = data.items.map(c => {
       const o = c.last_overview;
       const metrics = o ? `organic <b>${o.count ?? '—'}</b> · top3 ${o.top3} · top10 ${o.top10} · etv ${o.etv != null ? Math.round(o.etv) : '—'}` : '<span class="mut">not fetched yet</span>';
       const deltas = o ? `<span class="move-new">+${o.is_new ?? 0} new</span> · <span class="move-up">▲${o.is_up ?? 0}</span> · <span class="move-down">▼${o.is_down ?? 0}</span> · <span class="move-lost">${o.is_lost ?? 0} lost</span>` : '';
-      return `<div class="card" style="margin-top:12px">
-        <div class="row" style="align-items:baseline"><h3 style="flex:0">${esc(c.domain)}</h3>${c.label ? `<span class="tag">${esc(c.label)}</span>` : ''}
+      return `<div class="card hov" style="margin-top:12px">
+        <div class="card-head"><span class="sec-h" style="font-size:14px">${icon('globe', 'sm')} ${esc(c.domain)}</span>${c.label ? `<span class="tag">${esc(c.label)}</span>` : ''}
           <div class="spacer"></div>
-          <button class="btn" data-refresh="${c.id}">Refresh</button>
-          <button class="btn" data-keywords="${c.id}">Keywords</button>
-          <button class="btn" data-gap="${c.id}" title="Referring domains they have that you don't">Link gap</button>
-          <button class="btn" data-del="${c.id}" title="remove">✕</button></div>
+          <button class="btn sm" data-refresh="${c.id}">${icon('refresh', 'sm')} Refresh</button>
+          <button class="btn sm" data-keywords="${c.id}">Keywords</button>
+          <button class="btn sm" data-gap="${c.id}" title="Referring domains they have that you don't">Link gap</button>
+          <button class="btn sm danger" data-del="${c.id}" title="remove">✕</button></div>
         <div style="font-size:12.5px;margin-top:6px">${metrics}</div>
         <div style="font-size:12px;margin-top:4px">${deltas}</div>
         <div class="mut" style="font-size:11px;margin-top:4px">last checked: ${esc(c.last_checked_at || 'never')}</div>
@@ -1785,20 +1787,31 @@ async function viewBacklinks() {
   const toxRows = (d.toxic_domains || []).map(t => `<tr><td>${esc(t.domain)}</td>
     <td class="tnum">${t.domain_rating ?? '—'}</td><td class="tnum">${t.dofollow ?? '—'}</td>
     <td class="mut" style="font-size:12px">${esc(t.reason || '')}</td></tr>`).join('');
+  const seen = d.referring_domains_seen ?? d.refdomains_live ?? 0;
+  const clean = Math.max(0, seen - (d.toxic_count || 0));
   view(head('Backlinks Profile', activeName()) + `
-    <div class="grid tiles">
-      ${tile('Domain Rating', d.domain_rating ?? '—')}
-      ${tile('Referring domains', d.refdomains_live ?? '—', true)}
-      ${tile('Backlinks (live)', d.backlinks_live ?? '—', true)}
-      ${tile('Toxic flagged', d.toxic_count ?? 0, true)}
+    <div class="bento">
+      <div class="card c4"><div class="card-head">${secH('backlinks', 'Link health')}</div>
+        ${donut([
+          { label: 'Clean', value: clean, color: 'var(--pos)' },
+          { label: 'Toxic', value: d.toxic_count || 0, color: 'var(--neg)' },
+        ], { center: d.domain_rating ?? '—', centerLabel: 'DR' })}
+      </div>
+      <div class="card c8"><div class="card-head">${secH('backlinks', 'Profile')}</div>
+        <div class="grid tiles" style="gap:12px">
+          ${tile('Domain Rating', d.domain_rating ?? '—')}
+          ${tile('Referring domains', d.refdomains_live ?? '—', true)}
+          ${tile('Backlinks (live)', d.backlinks_live ?? '—', true)}
+          ${tile('Toxic flagged', d.toxic_count ?? 0, true)}</div>
+      </div>
     </div>
-    ${(d.toxic_count || 0) > 0 ? `<div class="card" style="margin-top:14px;padding:4px 4px 8px">
-      <div class="row" style="align-items:center;padding:10px 10px 4px"><h3 style="flex:0">⚠ Toxic / disavow candidates <span class="mut" style="font-size:11px">${d.toxic_count} of ${d.referring_domains_seen} refdomains</span></h3>
-        <div class="spacer"></div><button class="btn danger" id="blDisavow">Download disavow file</button></div>
+    ${(d.toxic_count || 0) > 0 ? `<div class="card" style="margin-top:16px;padding:4px 4px 8px">
+      <div class="card-head" style="padding:12px 12px 2px">${secH('alerts', 'Toxic / disavow candidates', d.toxic_count + ' of ' + seen + ' refdomains')}
+        <div class="spacer"></div><button class="btn danger sm" id="blDisavow">${icon('download', 'sm')} Download disavow file</button></div>
       <table><thead><tr><th>Domain</th><th>DR</th><th>Dofollow</th><th>Why flagged</th></tr></thead>
       <tbody>${toxRows}</tbody></table></div>` : ''}
-    <div class="card" style="margin-top:14px;padding:4px 4px 8px">
-      <h3 style="padding:10px 10px 4px">Top referring domains <span class="mut" style="font-size:11px">by DR</span></h3>
+    <div class="card" style="margin-top:16px;padding:4px 4px 8px">
+      <div class="card-head" style="padding:12px 12px 2px">${secH('backlinks', 'Top referring domains', 'by DR')}</div>
       <table><thead><tr><th>Domain</th><th>DR</th><th>Links</th><th>Dofollow</th><th>First seen</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="5"><span class="mut">none</span></td></tr>'}</tbody></table></div>
     <p class="mut" style="font-size:11.5px;margin-top:10px">Source: Ahrefs API. Toxic = known PBN (e.g. itxoft) or DR≤3 with no dofollow links. Review the disavow file before uploading to Google Search Console.</p>`);
@@ -2216,8 +2229,8 @@ async function viewContent() {
   const personaOpts = '<option value="">🎲 random persona</option>' + (pers.items || []).map(x =>
     `<option value="${esc(x.id)}" title="${esc(x.summary)}">${esc(x.name)} · ${esc(x.location.split(',')[0])}</option>`).join('');
 
-  const badge = s => ({ pending: '<span class="badge">pending</span>', approved: '<span class="badge ok">approved</span>',
-    scheduled: '<span class="badge">scheduled</span>', published: '<span class="badge ok">published</span>',
+  const badge = s => ({ pending: '<span class="badge warn">pending</span>', approved: '<span class="badge ok">approved</span>',
+    scheduled: '<span class="badge info">scheduled</span>', published: '<span class="badge ok">published</span>',
     rejected: '<span class="badge off">rejected</span>' }[s] || `<span class="mut">${esc(s)}</span>`);
 
   const ctAction = async (act, id) => {
@@ -2299,7 +2312,8 @@ async function viewContent() {
       <select id="ctFilter">${['pending', 'approved', 'scheduled', 'published', 'rejected', 'all'].map(s => `<option value="${s}" ${s === _ctFilter ? 'selected' : ''}>${s}</option>`).join('')}</select>
     </div>
     <div id="ctMsg" style="margin-top:8px;font-size:12.5px"></div>
-    <div class="card" style="margin-top:10px;padding:4px 4px 8px" id="ctTable"><div class="loading">Loading…</div></div>`);
+    <div class="card-head" style="margin-top:10px">${secH('content', 'Draft queue')}</div>
+    <div class="card" style="margin-top:4px;padding:4px 4px 8px" id="ctTable"><div class="loading">Loading…</div></div>`);
 
   $('#ctGen').addEventListener('click', async () => {
     const keyword = $('#ctKw').value.trim(); if (!keyword) return;
@@ -2458,15 +2472,21 @@ async function viewThoughts() {
   ]);
   const sb = sum.scoreboard || {};
   const badge = s => `<span class="badge ${s === 'dismissed' ? 'off' : ''}">${esc(s)}</span>`;
-  const cards = (list.items || []).map(d => `<div class="card" style="margin-top:8px">
-    <div style="display:flex;justify-content:space-between;gap:8px"><b>${esc(d.target)}</b>${badge(d.status)}</div>
-    <div class="mut" style="font-size:11px">${esc(d.kind)}${d.created_at ? ' · ' + esc(d.created_at.slice(0, 16).replace('T', ' ')) : ''}</div>
-    <div style="margin-top:6px;font-size:12.5px">${_callBadge('Suggested', { yes: d.suggested_yes, conviction: d.suggested_conviction })} · ${_callBadge('Gemma', d.gemma)} · ${_callBadge('Claude', d.anthropic)}${d.score && d.score.agreement != null ? ' · ' + (d.score.agreement ? '<span class="badge">agree</span>' : '<span class="badge off">disagree</span>') : ''}</div>
-    ${(d.anthropic.rationale || d.gemma.rationale) ? `<div class="mut" style="margin-top:4px">“${esc(d.anthropic.rationale || d.gemma.rationale)}”</div>` : ''}
-  </div>`).join('');
+  const cards = (list.items || []).map(d => {
+    const dis = d.score && d.score.agreement != null && !d.score.agreement;
+    return `<div class="card hov${dis ? ' conflict-card' : ''}" style="margin-top:10px">
+    <div class="card-head" style="margin-bottom:8px"><b>${esc(d.target)}</b><span class="tag" style="margin-left:6px">${esc(d.kind)}</span><div class="spacer"></div>${badge(d.status)}</div>
+    <div class="mut" style="font-size:11px;margin-top:-6px">${d.created_at ? esc(d.created_at.slice(0, 16).replace('T', ' ')) : ''}</div>
+    <div style="margin-top:8px;font-size:12.5px;display:flex;gap:14px;flex-wrap:wrap;align-items:center">${_callBadge('Suggested', { yes: d.suggested_yes, conviction: d.suggested_conviction })} ${_callBadge('Gemma', d.gemma)} ${_callBadge('Claude', d.anthropic)}${d.score && d.score.agreement != null ? (d.score.agreement ? '<span class="badge ok">agree</span>' : '<span class="badge off">disagree</span>') : ''}</div>
+    ${(d.anthropic.rationale || d.gemma.rationale) ? `<div class="mut" style="margin-top:8px">“${esc(d.anthropic.rationale || d.gemma.rationale)}”</div>` : ''}
+  </div>`;
+  }).join('');
   view(head('Thoughts', activeName()) + `
-    <div class="toolbar"><span class="mut" style="font-size:12px">${(list.items || []).length} recent · Gemma↔Claude agreement ${sb.agreement_rate != null ? Math.round(sb.agreement_rate * 100) + '%' : '—'} over ${sb.judged || 0}</span><div class="spacer"></div><button class="btn" id="thRefresh">Refresh</button></div>
-    ${cards || '<div class="empty">No thoughts yet. The detector runs on a timer; once it mints decisions and Gemma reviews them, they show here.</div>'}`);
+    <div class="card" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 18px">
+      ${secH('thoughts', (list.items || []).length + ' recent thoughts')}
+      <span class="mut" style="font-size:12.5px">Gemma${icon('compare', 'sm')}Claude agreement <b class="tnum">${sb.agreement_rate != null ? Math.round(sb.agreement_rate * 100) + '%' : '—'}</b> over ${sb.judged || 0}</span>
+      <div class="spacer"></div><button class="btn sm" id="thRefresh">${icon('refresh', 'sm')} Refresh</button></div>
+    <div>${cards || '<div class="empty" style="margin-top:12px">No thoughts yet. The detector runs on a timer; once it mints decisions and Gemma reviews them, they show here.</div>'}</div>`);
   $('#thRefresh').addEventListener('click', viewThoughts);
   setUpdated();
 }
