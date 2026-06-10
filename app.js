@@ -1822,6 +1822,7 @@ async function viewAnalytics() {
     return;
   }
   view(head('Analytics', activeName()) + `
+    <div class="card-head">${secH('analytics', 'Traffic & engagement', 'Ahrefs · last ' + d.days + 'd')}</div>
     <div class="grid tiles">
       ${tile('Visitors', d.visitors ?? '—')}
       ${tile('Visits', d.visits ?? '—', true)}
@@ -1859,8 +1860,8 @@ async function viewSearchConsole() {
       ${tile('Queries', (d.rows || []).length, true)}
     </div>
     <div class="card" style="margin-top:14px;padding:4px 4px 8px">
-      <div class="row" style="align-items:center;padding:10px 10px 4px"><h3 style="flex:0">Top queries <span class="mut" style="font-size:11px">last ${d.days}d</span></h3>
-        <div class="spacer"></div>${(d.rows || []).length ? `<button class="btn" id="gscExport">Export CSV</button>` : ''}</div>
+      <div class="card-head" style="padding:12px 12px 2px">${secH('search', 'Top queries', 'last ' + d.days + 'd')}
+        <div class="spacer"></div>${(d.rows || []).length ? `<button class="btn sm" id="gscExport">${icon('download', 'sm')} Export CSV</button>` : ''}</div>
       <table><thead><tr><th>Query</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Pos</th><th>URL</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="6"><span class="mut">no impressions yet</span></td></tr>'}</tbody></table></div>
     <p class="mut" style="font-size:11.5px;margin-top:10px">GSC read via the linked Ahrefs project (free). 2–3 day GSC delay applies.</p>`);

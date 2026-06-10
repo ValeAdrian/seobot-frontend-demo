@@ -358,4 +358,45 @@ Keep all table columns when stacking into cards — density is preserved, not st
 | Visible focus rings + AA contrast on every control. | Remove focus outlines or rely on colour alone. |
 | Keep transitions 120–200ms, reduced-motion friendly. | Add long or decorative animation. |
 
-Source files: `app.css`, `app.js`, `DESIGN.md`, `STITCH-BRIEF.md`.
+## 16. Implemented uplift — icons, bento, charts & helpers
+
+The Stitch redesign was applied to the live `app.js`/`app.css` (no Tailwind/Material/Google-Fonts CDN —
+inline-SVG icons + vendored charts, faithful to production). Reuse these helpers when building new views.
+
+### 16.1 Inline-SVG icon system (no CDN)
+- `ICON` — a map of `name → inner SVG markup` (Lucide-style 24×24 paths, `stroke=currentColor`).
+- `icon(name, cls='')` → `<svg class="ico {cls}" viewBox="0 0 24 24">…</svg>`. Sizes: `.ico` (20px), `.ico.sm` (15px), `.ico.lg` (26px). Icons inherit text colour, so they recolour with their context (muted in nav, blue when active/in a `.sec-h`).
+- `NAV_ICON` — maps every nav view-id → an icon name; `renderSidebar()` renders `icon()` + label per item.
+- **Never** add a CDN icon font (Material Symbols etc.). Add new glyphs to `ICON` as inline paths.
+
+### 16.2 Bento grid
+- `.bento` = a 12-column grid; children take `.c3 / .c4 / .c6 / .c8 / .c12`. Collapses to 6-col at ≤1080px and single-col at ≤560px. Use for dashboard hero rows (e.g. a chart `.c8` + a summary `.c4`).
+
+### 16.3 Stat tiles (icon + value + delta)
+- `stat(k, v, ic, delta, small)` → a `.card.stat.hov` with a label, a corner icon, a big value, and an optional `delta` `{dir:'up'|'down'|'flat', text}`. Lay out in `.grid.tiles`.
+- **`tile(k, v, small)` is now an alias for the icon-stat look** — it infers an icon from the label via `TILE_ICON`/`tileIcon()`, so *every existing caller* renders the upgraded card automatically. Pass a label whose keyword maps to a sensible icon, or use `stat()` for an explicit icon.
+
+### 16.4 Section heads
+- `secH(ic, title, suffix?)` → `<span class="sec-h">{icon} {title} <small class="mut">{suffix}</small></span>`. Put inside a `.card-head` (flex row: title left, actions/meta right). Replaces bare `<h3>emoji Title</h3>`.
+
+### 16.5 Charts (inline SVG, no CDN) — **data-honest**
+- `donut(segs, {center, centerLabel})` — `segs = [{label, value, color, fmt?}]`; renders an SVG ring + legend (used: Indexation coverage, Spend by-endpoint).
+- `gauge(pct, label, status, valText?)` — a half-radial gauge, `status` = `pos|warn|neg` (used: Site Health Core Web Vitals).
+- Time-series stay on **lightweight-charts** (vendored): `drawHero()`, `drawCwvTrend()`; fall back to `sparkline()`.
+- **Rule:** only render a chart when **real data backs it** — never fabricate series/segments. Pages whose API has no part-to-whole or trend data keep stat tiles + tables.
+
+### 16.6 Grade badge
+- `gradeLetter(score)` (A–F from 0–100) + `gradeCls(score)` (`pos|warn|neg`) feed `.grade-badge` (Site Health on-page grade).
+
+### 16.7 Decision-loop specifics
+- `_callBadge('Claude'|'Gemma', call)` → `<label> <YES|NO pill> <mono %>` — **green `.badge.ok` for YES, red `.badge.off` for NO**.
+- Disagreement rows get `class="conflict"` → amber left-border + tinted bg (`tr.conflict`) + a `.badge.off` "conflict" chip. Always surface Gemma-vs-Claude conflicts.
+- Action buttons: green `.btn.ok` (Approve), red `.btn.danger` (Dismiss), plus `.btn.sm` size.
+
+### 16.8 Where it's applied
+- **Bespoke-rebuilt** (full bento/charts): Overview, Decisions, Site Health, Indexation, Spend.
+- **Global uplift** (every other page): icon-bearing sidebar nav + the upgraded `tile()` icon stat cards + the refined card/badge/table/button system. Roll the bespoke treatment to more pages by composing `secH()` + `.bento` + `stat()`/`donut()`/`gauge()` from real data.
+
+---
+
+Source files: `app.css`, `app.js`, `DESIGN.md`, `STITCH-BRIEF.md`. Helpers live in `app.js` (`icon`, `stat`, `tile`, `secH`, `donut`, `gauge`, `gradeLetter`, `_callBadge`).

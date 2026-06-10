@@ -75,7 +75,11 @@ Semantics: **green = good/up, red = bad/down, amber = caution, blue = brand/inte
 - **Modal** — centred, rounded, soft-shadow overlay.
 - **Empty state** `.empty` — dashed-border panel, muted, centred.
 - **Grade badge** — a big letter (A–F) in a rounded square, coloured by grade.
-- **Charts** — area/line via `lightweight-charts` (blue stroke, faint fill). Keep them inside cards.
+- **Charts** — area/line via `lightweight-charts` (blue stroke, faint fill); **donut** + half-radial **gauge** via inline SVG (`donut()`/`gauge()`). All inside cards, all same-origin — never a chart CDN.
+- **Icons** — inline-SVG only (Lucide-style, `stroke=currentColor`), via the `ICON` map + `icon(name)`. Sidebar nav, stat tiles, and `.sec-h` section heads carry them. **Never** a Material/icon-font CDN.
+- **Bento** `.bento` (12-col) for dashboard hero rows; **icon stat tile** = the upgraded `.tile`/`stat()` (label + corner icon + big value + optional delta); **section head** `.sec-h` (icon + title).
+
+> The full implementation reference — every helper (`icon`, `stat`, `tile`, `secH`, `donut`, `gauge`, `gradeLetter`, `_callBadge`) and where each is applied — is in **DESIGN-SYSTEM.md §16**. Keep it updated when you add components.
 
 ## 8. Navigation (CURRENTLY TOO BULKY — please reinvent — see STITCH-BRIEF.md)
 Today: ~32 items in 4 groups (Dashboards / Back Office / Project / Global). That's the #1 problem to solve.
