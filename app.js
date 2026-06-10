@@ -134,6 +134,34 @@ function stat(k, v, ic, delta, small) {
     <div class="stat-top"><span class="k">${esc(k)}</span>${ic ? icon(ic, 'stat-ico') : ''}</div>
     <div class="v ${small ? 'sm' : ''} tnum">${esc(v)}</div>${d}</div>`;
 }
+// section header: icon + title (+ optional muted suffix). Inline, reusable across views.
+function secH(ic, title, suffix) { return `<span class="sec-h">${icon(ic)} ${esc(title)}${suffix ? ` <small class="mut">${esc(suffix)}</small>` : ''}</span>`; }
+// inline-SVG donut (no CDN). segs = [{label, value, color, fmt?}]; opts {center, centerLabel}
+function donut(segs, opts = {}) {
+  const total = segs.reduce((a, s) => a + (+s.value || 0), 0) || 1;
+  const r = 42, C = 2 * Math.PI * r, cx = 60, cy = 60;
+  let off = 0;
+  const rings = segs.map(s => {
+    const len = (+s.value || 0) / total * C;
+    const ring = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="13" stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+    off += len; return ring;
+  }).join('');
+  const ctr = opts.center != null ? `<text x="${cx}" y="${cy - 1}" text-anchor="middle" class="donut-c" font-size="19">${esc(opts.center)}</text><text x="${cx}" y="${cy + 15}" text-anchor="middle" class="donut-cl" font-size="9">${esc(opts.centerLabel || '')}</text>` : '';
+  const legend = segs.map(s => `<div class="lg"><span class="sw" style="background:${s.color}"></span>${esc(s.label)}<span class="val">${esc(s.fmt != null ? s.fmt : s.value)}</span></div>`).join('');
+  return `<div class="chartwrap"><svg class="donut" viewBox="0 0 120 120" width="124" height="124"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--panel2)" stroke-width="13"/>${rings}${ctr}</svg><div class="donut-legend">${legend}</div></div>`;
+}
+// inline-SVG half-radial gauge (no CDN). pct 0..100; status pos|warn|neg
+function gauge(pct, label, status, valText) {
+  pct = Math.max(0, Math.min(100, +pct || 0));
+  const R = 40, C = Math.PI * R, len = pct / 100 * C;
+  const col = status === 'warn' ? 'var(--warn)' : status === 'neg' ? 'var(--neg)' : 'var(--pos)';
+  const path = 'M10 52 A40 40 0 0 1 90 52';
+  return `<div class="gauge"><svg viewBox="0 0 100 60" width="118" height="71">
+    <path d="${path}" fill="none" stroke="var(--line2)" stroke-width="8" stroke-linecap="round"/>
+    <path d="${path}" fill="none" stroke="${col}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${len.toFixed(2)} 999"/>
+    <text x="50" y="46" text-anchor="middle" class="gv" font-size="18">${esc(valText != null ? valText : pct)}</text></svg>
+    <div class="glab">${esc(label)}</div></div>`;
+}
 
 // ---- chrome ----
 function renderSidebar() {
@@ -359,8 +387,20 @@ function wireStrategist(p) {
     catch (e) { btn.disabled = false; btn.textContent = 'Refresh'; alert('Strategist failed: ' + e.message); }
   });
 }
+// A–F grade from a 0–100 score (Site Health, audits)
+function gradeLetter(score) { if (score == null) return '—'; return score >= 90 ? 'A' : score >= 75 ? 'B' : score >= 60 ? 'C' : score >= 45 ? 'D' : 'F'; }
+function gradeCls(score) { if (score == null) return 'warn'; return score >= 75 ? 'pos' : score >= 50 ? 'warn' : 'neg'; }
+// infer a sensible icon from a tile's label so every existing tile() call gains one
+const TILE_ICON = [[/visib|rank|position|climb|pos\b/i, 'rank'], [/keyword|tracked/i, 'key'], [/click/i, 'rank'],
+  [/impress/i, 'analytics'], [/ctr|quer/i, 'search'], [/top\s*3|top3/i, 'star'], [/top\s*10|top10/i, 'leaderboard'],
+  [/quick|win/i, 'zap'], [/spend|cost|mtd|budget|remaining|\$/i, 'spend'], [/visitor|visit|session|pageview|bounce|traffic/i, 'analytics'],
+  [/backlink|referring|domain rating|\bdr\b/i, 'backlinks'], [/toxic|disavow/i, 'alerts'], [/index|coverage|submitted|crawl/i, 'indexation'],
+  [/competitor/i, 'competitors'], [/draft|content|publish|word/i, 'content'], [/score|grade|health|cwv|lcp|cls|inp/i, 'health'],
+  [/opportunit/i, 'opportunities'], [/domain/i, 'domains'], [/alert|rule/i, 'alerts']];
+function tileIcon(label) { const s = String(label); for (const [re, ic] of TILE_ICON) if (re.test(s)) return ic; return 'analytics'; }
+// stat tile (label + inferred corner icon + big value). Signature unchanged — uplifts every existing caller.
 const tile = (k, v, small) =>
-  `<div class="card tile"><div class="k">${esc(k)}</div><div class="v ${small ? 'small' : ''} tnum">${esc(v)}</div></div>`;
+  `<div class="card stat hov"><div class="stat-top"><span class="k">${esc(k)}</span>${icon(tileIcon(k), 'stat-ico')}</div><div class="v ${small ? 'sm' : ''} tnum">${esc(v)}</div></div>`;
 
 function drawHero(trend) {
   const elc = $('#heroChart');
@@ -1625,19 +1665,29 @@ async function viewSiteHealth() {
   const data = await api(`/api/p/${p}/audit`);
   const latest = data.items[0];
   view(head('Site Health', activeName()) + `
-    ${latest ? `<div class="grid tiles">
-        ${tile('On-page score', latest.onpage_score ?? '—')}
-        ${tile('Open flags', latest.checks_failed.length, true)}
-        ${tile('Internal links', latest.internal_links ?? '—', true)}
-        ${tile('Audits run', data.items.length, true)}</div>
-      <div class="card" style="margin-top:14px"><h3>Latest audit · ${esc(shortUrl(latest.url))}</h3>
-        <div style="margin-top:6px">${latest.checks_failed.map(f => `<span class="tag">${esc(f)}</span>`).join('') || '<span class="mut">no flags</span>'}</div></div>`
+    ${latest ? `<div class="bento">
+        <div class="card c4" style="display:flex;align-items:center;gap:16px">
+          <div class="grade-badge ${gradeCls(latest.onpage_score)}" style="width:66px;height:66px;font-size:32px">${gradeLetter(latest.onpage_score)}</div>
+          <div><div class="big tnum" style="font-size:28px">${latest.onpage_score ?? '—'}<span class="mut" style="font-size:14px;font-family:var(--body)"> /100</span></div>
+            <div class="mut" style="font-size:12px;margin-top:2px">On-page health grade</div>
+            <div class="mut" style="font-size:11.5px;margin-top:6px">${latest.checks_failed.length} open flag${latest.checks_failed.length === 1 ? '' : 's'}</div></div>
+        </div>
+        <div class="card c8">
+          <div class="card-head">${secH('health', 'Audit summary')}<span class="mut" style="font-size:11px">${esc(shortUrl(latest.url))}</span></div>
+          <div class="grid tiles" style="gap:12px">
+            ${tile('On-page score', latest.onpage_score ?? '—')}
+            ${tile('Open flags', latest.checks_failed.length, true)}
+            ${tile('Internal links', latest.internal_links ?? '—', true)}
+            ${tile('Audits run', data.items.length, true)}</div>
+        </div>
+      </div>
+      <div class="card"><div class="card-head">${secH('audit', 'Latest audit flags')}<span class="mut" style="font-size:11px">${esc(shortUrl(latest.url))}</span></div>
+        <div>${latest.checks_failed.map(f => `<span class="tag">${esc(f)}</span>`).join('') || '<span class="mut">no flags</span>'}</div></div>`
       : `<div class="empty">No audits yet — run one on the <b>Site Audit</b> page.</div>`}
-    <div class="card" style="margin-top:14px">
-      <div class="row" style="align-items:center"><h3 style="flex:0">Core Web Vitals</h3>
-        <span class="mut" style="font-size:11px">PageSpeed Insights</span><div class="spacer"></div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-head">${secH('pulse', 'Core Web Vitals', 'PageSpeed Insights')}<div class="spacer"></div>
         <select id="cwvStrategy"><option value="mobile">Mobile</option><option value="desktop">Desktop</option></select>
-        <button class="btn primary" id="cwvRun">Run</button></div>
+        <button class="btn primary" id="cwvRun">${icon('refresh', 'sm')} Run</button></div>
       <div id="cwvMsg" class="mut" style="font-size:12.5px;margin-top:6px">Runs Lighthouse on the primary domain (~15s) and records a snapshot.</div>
       <div id="cwvTrend" style="margin-top:10px"></div>
       <div id="cwvResult" style="margin-top:10px"></div>
@@ -1691,7 +1741,13 @@ function cwvHtml(d) {
     : c === 'AVERAGE' ? '<span class="badge off">needs work</span>'
     : c === 'SLOW' ? '<span class="badge off">poor</span>' : '';
   const fk = Object.keys(field);
+  const sc = d.score;
   return `
+    <div class="card hov" style="margin-bottom:12px"><div class="gauges" style="justify-content:space-around">
+      ${gauge(sc ?? 0, 'Performance', sc >= 90 ? 'pos' : sc >= 50 ? 'warn' : 'neg')}
+      ${field.lcp ? gauge(field.lcp.category === 'FAST' ? 100 : field.lcp.category === 'AVERAGE' ? 60 : 25, 'LCP', field.lcp.category === 'FAST' ? 'pos' : field.lcp.category === 'AVERAGE' ? 'warn' : 'neg', dv('lcp')) : gauge(sc >= 75 ? 80 : 40, 'LCP', 'warn', dv('lcp'))}
+      ${field.cls ? gauge(field.cls.category === 'FAST' ? 100 : field.cls.category === 'AVERAGE' ? 60 : 25, 'CLS', field.cls.category === 'FAST' ? 'pos' : field.cls.category === 'AVERAGE' ? 'warn' : 'neg', dv('cls')) : gauge(80, 'CLS', 'pos', dv('cls'))}
+    </div></div>
     <div class="grid tiles">
       ${tile('Performance', d.score ?? '—')}
       ${tile('LCP', dv('lcp'), true)}
@@ -1874,12 +1930,17 @@ async function viewSpend() {
       ${tile('Monthly cap', '$' + s.monthly_cap, true)}
       ${tile('Remaining', '$' + s.monthly_remaining, true)}
     </div>
-    <div class="card" style="margin-top:14px">
-      <div class="mut" style="font-size:12px">Monthly budget — ${pct}% used</div>
-      <div class="meter"><div class="meter-fill ${barClass}" style="width:${pct}%"></div></div>
+    <div class="bento" style="margin-top:14px">
+      <div class="card c8"><div class="card-head">${secH('spend', 'Monthly budget', pct + '% used')}</div>
+        <div class="meter"><div class="meter-fill ${barClass}" style="width:${pct}%"></div></div>
+        <div class="mut" style="font-size:11.5px;margin-top:9px">$${s.mtd} of $${s.monthly_cap} cap · <b class="pos">$${s.monthly_remaining}</b> remaining · $${s.today} today</div>
+      </div>
+      <div class="card c4"><div class="card-head">${secH('analytics', 'By endpoint')}</div>
+        ${donut((s.by_endpoint || []).slice(0, 5).map((r, i) => ({ label: (r.endpoint.split('/').pop() || r.endpoint).slice(0, 16), value: r.cost, color: ['#5cc8ff', '#3fd896', '#f5b14c', '#f4636f', '#9d8cff'][i % 5], fmt: '$' + r.cost })), { center: '$' + s.mtd, centerLabel: 'MTD' })}
+      </div>
     </div>
-    <div class="card" style="margin-top:14px">
-      <h3>Budget caps</h3>
+    <div class="card" style="margin-top:16px">
+      <div class="card-head">${secH('settings', 'Budget caps')}</div>
       <p class="mut" style="font-size:12.5px">Submits are blocked when a call would breach a cap. Edited here (stored as global settings) or via <code>SEOBOT_DFS_DAILY_CAP</code> / <code>SEOBOT_DFS_MONTHLY_CAP</code>.</p>
       <div class="row" style="align-items:flex-end">
         <div class="field"><label>Daily cap (USD)</label><input id="capDaily" type="number" min="0" step="0.5" value="${esc(s.daily_cap)}"></div>
@@ -1893,7 +1954,7 @@ async function viewSpend() {
       <div class="card"><h3>By endpoint</h3><table><thead><tr><th>Endpoint</th><th>Calls</th><th>Cost</th></tr></thead><tbody>${eps}</tbody></table></div>
     </div>
 
-    <h3 style="margin:26px 0 0">🧠 AI assistant cost</h3>
+    <div class="sec-h" style="margin:28px 0 0;font-size:16px">${icon('brain')} AI assistant cost</div>
     <p class="mut" style="font-size:12px;margin:4px 0 0">LLM spend (Action Plan "AI assist" + the daily strategist), logged per call from token usage. Cost is an estimate from each model's list price.</p>
     <div class="grid tiles" style="margin-top:12px">
       ${tile('AI · Month to date', fmt4(ai.mtd))}
@@ -2038,7 +2099,26 @@ async function viewIndexation() {
       <td class="tnum mut">${u.serp_count ?? '—'}</td>
       <td class="mut" style="font-size:11px">${u.checked_on ? esc(String(u.checked_on).slice(0, 10)) : '—'}</td>
       <td><button class="lnk idx-del" style="color:var(--neg)">remove</button></td></tr>`).join('');
+    const notIdx = Math.max(0, (d.checked || 0) - (d.indexed || 0));
+    const notChk = Math.max(0, (d.total || 0) - (d.checked || 0));
+    const covPct = d.checked ? Math.round((d.indexed / d.checked) * 100) + '%' : '—';
     view(head('Indexation', activeName()) + `
+      <div class="bento">
+        <div class="card c4"><div class="card-head">${secH('indexation', 'Coverage')}</div>
+          ${donut([
+            { label: 'Indexed', value: d.indexed || 0, color: 'var(--pos)' },
+            { label: 'Not indexed', value: notIdx, color: 'var(--neg)' },
+            { label: 'Not checked', value: notChk, color: 'var(--line2)' },
+          ], { center: covPct, centerLabel: 'indexed' })}
+        </div>
+        <div class="card c8"><div class="card-head">${secH('indexation', 'Index status')}</div>
+          <div class="grid tiles" style="gap:12px">
+            ${tile('Submitted', d.total)}
+            ${tile('Indexed', d.indexed, true)}
+            ${tile('Not indexed', notIdx, true)}
+            ${tile('Coverage', covPct, true)}</div>
+        </div>
+      </div>
       <div class="toolbar">
         <input id="idxUrl" class="grow" type="text" placeholder="URL to monitor (your page or a parasite placement)">
         <input id="idxLabel" type="text" placeholder="label (optional)" style="max-width:160px">

@@ -321,7 +321,14 @@ ol,ul{padding-left:18px}
 .kv-row:last-child{border-bottom:0}
 
 /* inline svg donut / gauge wrappers keep their aspect inside cards */
-.donut{display:block;margin:4px auto} .donut-legend{margin-top:10px;display:flex;flex-direction:column;gap:7px}
-.donut-legend .lg{display:flex;align-items:center;gap:8px;font-size:12.5px}
-.donut-legend .sw{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
-.donut-legend .val{margin-left:auto;font-family:var(--mono);color:var(--txt)}
+.donut{display:block;flex:0 0 auto} .donut-legend{display:flex;flex-direction:column;gap:8px;min-width:150px}
+.donut-legend .lg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mut)}
+.donut-legend .sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.donut-legend .val{margin-left:auto;font-family:var(--mono);color:var(--txt);font-weight:500}
+.donut-c{fill:#f3f7fb;font-family:var(--disp);font-weight:700} .donut-cl{fill:var(--mut);font-family:var(--body)}
+.chartwrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.gauges{display:flex;gap:14px;flex-wrap:wrap}
+.gauge{flex:1;min-width:120px;text-align:center;padding:6px 4px}
+.gauge .gv{fill:#f3f7fb;font-family:var(--disp);font-weight:700}
+.gauge .glab{font-size:11px;color:var(--mut);margin-top:2px}
+.gauge .gst{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
